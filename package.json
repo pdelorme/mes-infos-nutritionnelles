@@ -1,10 +1,10 @@
 {
-  "name": "cozy-tutorial",
+  "name": "mes-infos-nutritionnelles",
   "version": "0.0.1",
-  "description": "An application to get you started with web app development and Cozy.",
+  "description": "Appli Mes-Info de suivi nutritionel, basé sur les ticket de caisse.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/mycozycloud/cozy-tutorial.git"
+    "url": "https://github.com/pdelorme/mes-infos-nutritionnelles.git"
   },
   "main": "server.js",
   "dependencies": {
@@ -16,5 +16,14 @@
   ],
   "scripts": {
     "start": "node server.js"
+  },
+  "cozy-displayName": "Mes Infos Nutitionnelles",
+  "cozy-permissions": {
+    "Receipt": {
+        "description": "Visualiser la liste de vos tickets de caisse."
+    },
+    "ReceiptDetail": {
+        "description": "Visualiser les lignes de vos tickets de caisse."
+    }
   }
 }
