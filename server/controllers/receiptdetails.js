@@ -1,4 +1,4 @@
-ReceiptDetail = require('../models/receiptdetail')
+ReceiptDetail = require('../models/receiptdetail');
 
 module.exports.list = function(req, res) {
   ReceiptDetail.all(function(err, instances) {
@@ -35,7 +35,7 @@ function render(data) {
 '            </div>\n' +
 '          </div>\n' +
 '        </div>\n' ;
-
+        
     }
 
     header = 

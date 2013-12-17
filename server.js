@@ -1,4 +1,6 @@
 var americano = require('americano');
 
 var port = process.env.PORT || 9250;
-americano.start({name: 'bookmark', port: port});
+console.log("port is ",port);
+
+americano.start({name: 'mes-infos-nutritionelles', port: port});

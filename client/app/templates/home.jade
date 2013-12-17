@@ -1,0 +1,32 @@
+head
+  script(src="Chart.js") 
+
+h1= t('main title')
+p= t('main description')
+
+//-
+  ul(class="nav nav-tabs")
+    li(class="active") 
+      a(href="#stats",data-toggle="tab")  Mes statistiques nutritionnels
+    li 
+      a(href="#coach",data-toggle="tab")  Analyse
+    li
+      a(href="#control",data-toggle="tab")  Vérification
+
+  div(id='display',class='tab-content')
+    div(class='tab-pane active',id="stats").
+      Hello World
+    div(class='tab-pane',id="coach").
+      Bye Bye crual world
+    div(class='tab-pane',id="control").
+      test me
+    
+ul(class="nav nav-tabs")
+  li(class="active") 
+    a(id="statsButton",data-toggle="tab")  Mes statistiques nutritionnels
+  li 
+    a(id="coachButton",data-toggle="tab")  Analyse
+  li
+    a(id="controlButton",data-toggle="tab")  Vérification
+    
+div(id="tab-content",class='tab-content')
