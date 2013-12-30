@@ -1,6 +1,6 @@
-## Cozy tutorial
+## MES INFOS NUTRITIONNELLES
 
-This is the starting point of the Cozy Tutorial MesInfos part 1. Check the repository branches  to see more advanced steps.
+Application Cozy developpée dans le cadre du concours MesInfos.
 
 ## About Cozy
 
