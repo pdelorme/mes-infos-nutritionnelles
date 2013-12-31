@@ -176,20 +176,67 @@ var AppView = require('views/app_view');
 var ReceiptCollection = require('collections/receipts');
 
 var receipts = new ReceiptCollection();
+var mainView;
 
 module.exports = Router = Backbone.Router.extend({
 
     routes: {
-        '': 'main'
+        '': 'main',
+        'stats': 'stats',
+        'coach': 'coach',
+        'control': 'control',
+        '*path' : 'main'
     },
 
     main: function() {
-        var mainView = new AppView({
+        this.mainView = new AppView({
             collection: receipts
         });
-        mainView.render();
+        this.mainView.render();
+    },
+    
+    stats: function(){
+    	if(!this.mainView)
+    		this.main();
+    	this.mainView.statsView();
+    },
+    
+    coach: function(){
+    	if(!this.mainView)
+    		this.main();
+    	this.mainView.coachView();
+    },
+    
+    control: function(){
+    	if(!this.mainView)
+    		this.main();
+    	this.mainView.controlView();
     }
 });
+});
+
+;require.register("templates/coach", function(exports, require, module) {
+module.exports = function anonymous(locals, attrs, escape, rethrow, merge) {
+attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow || jade.rethrow; merge = merge || jade.merge;
+var buf = [];
+with (locals || {}) {
+var interp;
+buf.push('Hello coach');
+}
+return buf.join("");
+};
+});
+
+;require.register("templates/control", function(exports, require, module) {
+module.exports = function anonymous(locals, attrs, escape, rethrow, merge) {
+attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow || jade.rethrow; merge = merge || jade.merge;
+var buf = [];
+with (locals || {}) {
+var interp;
+buf.push('<div class="col-md-9"><H2> Ecran de controle</H2><p>Ce formulaire vous permet de lister les produits dont les informations nutritionnelles n\'ont pas été saisies dans la base de données openfood facts.<br/>\nles informations saisies ici seront envoyées à OpenFoodFacts pour réutilisation par d\'autre personnes du panel MesInfos et plus généralement par tous les utilisateurs de la base de donnée ouverte Open food Facts.<br/>\nMerci de saisir les données nutritionnelles avec soins.</p></div><div class="col-md-3 text-center"><img src="openfoodfacts-logo-fr.png"/></div><div class="col-md-12"><form role="form"><table class="table table-striped table-hover table-condensed"><thead><th class="col-md-2">référence intermarché</th><th class="col-md-1">dernière date d\'achat</th><th class="col-md-3">nom de l\'article</th><th class="col-md-1">poid (en grammes)</th><th class="col-md-1">calories (en KJoules)</th></thead><tbody id="products-body"><tr><td style="vertical-align:middle">Kiri 500G x6 portions 75G</td><td style="vertical-align:middle">25/12/1969</td><td><input type="text" placeholder="Nom de l\'article" class="form-control"/></td><td><input type="text" placeholder="Grammes" class="form-control"/></td><td><input type="text" placeholder="Kilo Joules" class="form-control"/></td></tr></tbody><tfoot><td colspan="5"> merci pour vos données</td></tfoot></table><button type="submit" class="btn btn-primary">Envoyer les modifications</button></form></div><script id="template-row" type="text/html"><tr><td style="vertical-align:middle"><%= code %></td><td style="vertical-align:middle"> timestamp </td><td><input type="text" placeholder="Nom de l\'article" class="form-control"/></td><td><input type="text" placeholder="Grammes" class="form-control"/></td><td><input type="text" placeholder="Kilo Joules" class="form-control"/></td></tr></script>');
+}
+return buf.join("");
+};
 });
 
 ;require.register("templates/home", function(exports, require, module) {
@@ -198,13 +245,13 @@ attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow |
 var buf = [];
 with (locals || {}) {
 var interp;
-buf.push('<head><script src="Chart.js"> </script></head><h1>');
+buf.push('<head><script src="Chart.js"> </script></head><nav role="navigation" class="navbar navbar-default navbar-fixed-top"><div class="container"><div class="navbar-header"><button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a href="#" class="navbar-brand">MesInfos Nutritionelles</a></div><div class="navbar-collapse collapse"><ul class="nav navbar-nav"><li><a href="#stats"> Statistiques</a></li><li><a href="#coach"> Analyse</a></li><li><a href="#control"> Vérifications</a></li><li class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle">A Propos<ul class="dropdown-menu"><li> <a href="#">&copy; 2013 Lookal</a></li><li> <a href="mail:pdelorme@lookal.fr">contact: pdelorme@lookal.fr</a></li><li> <a href="#">Merci à la Fing et à OpenFoodFacts pour leur assistance.<br/>\nLongue vie à mes infos</a></li></ul></a></li></ul></div></div></nav><div class="container">                      <br/><br/><br/><h1>');
 var __val__ = t('main title')
 buf.push(escape(null == __val__ ? "" : __val__));
 buf.push('</h1><p>');
 var __val__ = t('main description')
 buf.push(escape(null == __val__ ? "" : __val__));
-buf.push('</p><ul class="nav nav-tabs"><li class="active"> <a id="statsButton" data-toggle="tab"> Mes statistiques nutritionnels</a></li><li> <a id="coachButton" data-toggle="tab"> Analyse</a></li><li><a id="controlButton" data-toggle="tab"> Vérification</a></li></ul><div id="tab-content" class="tab-content"></div>');
+buf.push('</p><div id="tab-content"></div></div>');
 }
 return buf.join("");
 };
@@ -216,7 +263,7 @@ attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow |
 var buf = [];
 with (locals || {}) {
 var interp;
-buf.push('<H1>Stats</H1><div id="chartContainer" style="height: 300px; width: 100%;"></div><button type="button" class="btn btn-primary"> Recharger</button>');
+buf.push('<H1>Statistiques d\'achat nutritionnelles.</H1><div id="chartContainer"></div><button type="button" class="btn btn-primary"> Recharger</button>');
 }
 return buf.join("");
 };
@@ -224,15 +271,17 @@ return buf.join("");
 
 ;require.register("views/app_view", function(exports, require, module) {
 var StatsView = require('./stats_view');
+var CoachView = require('./coach_view');
+var ControlView = require('./control_view');
 
 module.exports = AppView = Backbone.View.extend({
 
     el: 'body',
     template: require('../templates/home'),
     events: {
-        "click #statsButton": "statsView",
-        "click #coachButton": "coachView",
-        "click #controlButton": "controlView"
+        "click #stats": "statsView",
+        "click #coach": "coachView",
+        "click #control": "controlView"
     },
 
     // initialize is automatically called once after the view is constructed
@@ -259,13 +308,91 @@ module.exports = AppView = Backbone.View.extend({
     },
     
     coachView:function(event){
-    	this.$el.find('#tab-content').html("");
+		coachView = new CoachView({
+	        model: this.collection
+	    });
+	    coachView.render();
+	    this.$el.find('#tab-content').html(coachView.$el);
     },
     
     controlView:function(event){
-    	this.$el.find('#tab-content').html("");
+		controlView = new ControlView({
+	        model: this.collection
+	    });
+	    controlView.render();
+	    this.$el.find('#tab-content').html(controlView.$el);
     }
 });
+});
+
+;require.register("views/coach_view", function(exports, require, module) {
+//var SectionView = require('./section');
+var ReceiptCollection = require('../collections/receipts');
+
+module.exports = StatsView = Backbone.View.extend({
+
+    tagName: 'div',
+    template: require('../templates/coach'),
+    events: {
+        //"click .receipt": "toggleSections",    
+        //"click .toggle": "toggleSectionsNoDefault"    
+    },
+
+    initialize: function() {
+        // this.collection = new ReceiptCollection([], { receiptId: this.model.attributes.receiptId });
+        
+    },
+
+    render: function() {
+        this.$el.html(this.template({
+            receipt: this.model.toJSON()
+        }));
+    },
+    
+});
+
+
+});
+
+;require.register("views/control_view", function(exports, require, module) {
+//var SectionView = require('./section');
+var ReceiptCollection = require('../collections/receipts');
+
+module.exports = StatsView = Backbone.View.extend({
+
+    tagName: 'div',
+    template: require('../templates/control'),
+    events: {
+        //"click .receipt": "toggleSections",    
+        //"click .toggle": "toggleSectionsNoDefault"    
+    },
+
+    initialize: function() {
+        // this.collection = new ReceiptCollection([], { receiptId: this.model.attributes.receiptId });
+        
+    },
+
+    render: function() {
+        this.$el.html(this.template());
+        this.getData();
+    },
+    
+    getData: function(){
+    	// asks server for product without infos.
+    	var that = this;
+    	var productBody = this.$el.find("#products-body");
+    	var productRowTemplate = _.template(this.$el.find("#template-row").html());
+    	productBody.html("");
+    	$.getJSON('invalidProducts', function(data) {
+    		$.each(data, function(key, val) {
+    			productBody.append(productRowTemplate(val));
+    		});
+    	});
+    }
+    
+});
+
+
 });
 
 ;require.register("views/stats_view", function(exports, require, module) {
@@ -282,74 +409,103 @@ module.exports = StatsView = Backbone.View.extend({
     },
 
     initialize: function() {
-        // this.collection = new ReceiptCollection([], { receiptId: this.model.attributes.receiptId });
-        
     },
 
     render: function() {
         this.$el.html(this.template({
             receipt: this.model.toJSON()
         }));
-        this.chartStats();
+        var that = this;
+        // async to allow proper refresh.
+        setTimeout(function(){
+        	that.updateChart();
+        },0);
     },
     
-    chartStats: function () {
+    updateChart: function (callback) {
+    	var dataPoints = [];
+    	var averagePoints = [];
     	var chartContainer = this.$el.find("#chartContainer");
 		var chart = new CanvasJS.Chart(chartContainer,{
 			title:{
-				text: "Spline Area Chart"
-			},    		
-			data: [
-			{        
-				type: "splineArea",
-				color: "rgba(54,158,173,.7)",
-				dataPoints: [
-				{x: new Date(1992,0), y: 2506000},     
-				{x: new Date(1993,0), y: 2798000},     
-				{x: new Date(1994,0), y: 3386000},     
-				{x: new Date(1995,0), y: 6944000},     
-				{x: new Date(1996,0), y: 6026000},     
-				{x: new Date(1997,0), y: 2394000},     
-				{x: new Date(1998,0), y: 1872000, indexLabel:"test"},     
-				{x: new Date(1999,0), y: 2140000},     
-				{x: new Date(2000,0), y: 7289000},     
-				{x: new Date(2001,0), y: 4830000},     
-				{x: new Date(2002,0), y: 2009000},     
-				{x: new Date(2003,0), y: 2840000},     
-				{x: new Date(2004,0), y: 2396000},     
-				{x: new Date(2005,0), y: 1613000},     
-				{x: new Date(2006,0), y: 2821000},     
-				{x: new Date(2007,0), y: 2000000},     
-				{x: new Date(2008,0), y: 1397000}    
-				]
+				text: "Energy Chart"
+			}, 
+			axisX:{
+			   labelAngle: 50,
+			   valueFormatString: "M/Y",
+			   lineThickness:0,
+			   gridThickness:0,
+			   tickThickness:0,
+			   interval:1,
+			   intervalType:"week"
 			},
-			{        
-				type: "spline",
-				color: "rgba(12,25,73,.7)",
-				dataPoints: [
-				{x: new Date(1993,0), y: 2506000},     
-				{x: new Date(1994,0), y: 2798000},     
-				{x: new Date(1995,0), y: 3386000},     
-				{x: new Date(1996,0), y: 6944000},     
-				{x: new Date(1997,0), y: 6026000},     
-				{x: new Date(1998,0), y: 2394000},     
-				{x: new Date(1999,0), y: 1872000},     
-				{x: new Date(2000,0), y: 2140000},     
-				{x: new Date(2001,0), y: 7289000},     
-				{x: new Date(2002,0), y: 4830000},     
-				{x: new Date(2003,0), y: 2009000},     
-				{x: new Date(2004,0), y: 2840000},     
-				{x: new Date(2005,0), y: 2396000},     
-				{x: new Date(2006,0), y: 1613000},     
-				{x: new Date(2007,0), y: 2821000},     
-				{x: new Date(2008,0), y: 2000000},     
-				{x: new Date(2009,0), y: 1397000}    
-				]
-			}                 
-			]
+			axisY:{
+				title:"Kilo Joules",
+				valueFormatString: "0.##",
+				labelFontSize:1,
+				lineThickness:0,
+				gridThickness:0,
+				tickThickness:0,
+				minimum:0,
+				interval:10
+			},
+			data: [
+			       {
+			    	   type: "column",
+			    	   color: "rgba(54,158,173,.7)",
+			    	   dataPoints: dataPoints,
+			    	   indexLabelPlacement:"outside",
+			    	   indexLabelAngle:50,
+			    	   indexLabel: "{y}"
+			       },
+			       {
+			    	   type: "splineArea",
+			    	   color: "rgba(8,15,173,.7)",
+			    	   dataPoints: averagePoints,
+			    	   markerType:"none"
+			       }
+			 ]
 		});
+		this.chart = chart;
+		// empty datapoints.
+    	dataPoints.length = 0;
+    	averagePoints.length = 0;
+		// build stats.
+		$.getJSON('receiptStats', function(data) {
+			var receiptStats = data;
+			var prevDay;
+			var prevValue;
+			$.each(receiptStats, function(key, val) {
+				var date = new Date(val.timestamp);
+				var day = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+				var energy = val.energy;
+				if(prevDay){
+					days = ((day.getTime()-prevDay.getTime())/(1000*60*60*24));
+					if(days==0) {
+						lastDataPoint = dataPoints.pop();
+						energy = lastDataPoint.y + energy;
+					}
+					else {
+						meanValue = Math.round(prevValue / days * 100) / 100;
+						for(var theTime = prevDay.getTime(); theTime<day.getTime(); theTime+=(1000*60*60*24)){
+							averagePoints.push({x:new Date(theTime), y:meanValue});
+						}
+						
+					}
+				}
+				prevDay   = day;
+				prevValue = energy;
+				console.log(day, energy);
+				dataPoints.push({x:day, y: energy});
+			});
+			console.log("nb points:",dataPoints.length);
+			
+			// refresh view.
+			chart.render();
 
-		chart.render();
+			if(callback)
+				callback();
+		});
 	}
 });
 

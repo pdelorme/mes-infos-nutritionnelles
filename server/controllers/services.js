@@ -1,28 +1,109 @@
 var Request = require('request-json');
 var Batch = require('batch');
 var FoodFact = require('../models/foodfact');
-var FoodFact = require('../models/receiptstat');
+var ReceiptStat = require('../models/receiptstat');
+var openFoodFactsClient = Request.newClient('http://fr.openfoodfacts.org/');
 
 module.exports.cleanDatabase = function(req, res) {
 	cleanDatabase(function(){
 		res.send(200, "OK");
 	});
-}
+};
 
 module.exports.buildDatabase = function(req, res) {
-	checkAllFoodfacts(function(){
-		buildAllStats(function(err){
-			res.send(200, "OK");
-		});
+	updateAllFoodfacts(function(){
+		res.send(200, "OK");
+		
 	});
-}
+};
+
+module.exports.buildAllStats = function(req, res){
+	buildAllStats(function(err){
+		res.send(200, "OK");
+	});
+};
+
+module.exports.receiptStats = function(req, res){
+	getReceiptStats(function(receiptStats){
+		res.send(200, receiptStats);
+	});
+};
+
+module.exports.invalidProducts = function(req, res) {
+	getInvalidProducts(function(products){
+			res.send(200, products);
+	});
+};
+
+module.exports.test = function(req, res){
+	var product = {
+			code : '3228021950129',
+			label : 'test'
+	};
+	updateFoodfact(product, new Date(), function(){
+		res.send(200);
+	});
+};
 
 /**
  * deletes all data related to the application.
  * @param done
  */
 function cleanDatabase(done){
-	
+	console.log("cleaning database");
+	FoodFact.all(function(err, foodfacts) {
+	    if(err != null) {
+	      console.log("error : ", err);
+	      return;
+	    }
+	    var batch = new Batch;
+	    batch.concurrency(10);
+	    for (idx in foodfacts) {
+	    	foodfact = foodfacts[idx];
+	    	batch.push(function(done) { 
+	    		foodfact.destroy();
+	    	});
+	    }
+	    batch.end(function(err, users){
+	    	console.log("cleanDatabase finished");
+	    	done();
+	    });
+	});
+}
+
+/**
+ * cleans all stats.
+ * retuns only when done.
+ * @returns
+ */
+function cleanAllStats(done){
+	console.log("cleaning all stats");
+	ReceiptStat.truncate(function(err, stats) {
+	    if(err != null) {
+	      console.log("error : ", err);
+	    }
+	    done();
+	});
+//	ReceiptStat.all(function(err, stats) {
+//	    if(err != null) {
+//	      console.log("error : ", err);
+//	      return;
+//	    }
+//	    var batch = new Batch;
+//	    batch.concurrency(10);
+//	    for (idx in stats) {
+//	    	var stat = stats[idx];
+//	    	batch.push(function(done) { 
+//	    		stat.destroy(done); 
+//	    	});
+//	    }
+//	    batch.end(function(err, users){
+//	    	if(err)
+//	    		console.log(err);
+//	    	console.log("cleanAllStats finished");
+//	    	done();
+//	    });
+//	});
 }
 /**
  * itère sur tous les articles de ticket de caisse et questionne OpenFoodFacts pour les info nutritionnelles.
@@ -30,26 +111,28 @@ function cleanDatabase(done){
  * 
  * @param done : callback when over.
  */
-function checkAllFoodfacts(done){
-	ReceiptDetail.all(function(err, receiptDetails) {
+function updateAllFoodfacts(done){
+	var timestamp = new Date();
+	ReceiptDetail.all(function(err, products) {
 	    if(err != null) {
 	      console.log("error : ", err);
 	      return;
 	    }
-	    batch = new Batch;
-	    batch.concurrency(1);
+	    var batch = new Batch;
+	    batch.concurrency(1); // la concurency pourra etre augmenté quand la vue product sera fonctionnelle.
 	    
-	    for (idx in receiptDetails) {
-	        receiptDetail = receiptDetails[idx];
-	        barcode = receiptDetail.barcode;
-	        (function(barcode){
+	    for (idx in products) {
+	        product = products[idx];
+	        (function(product){
 		        batch.push(function(done){
-			        checkFoodfact(barcode, done);		        
+			        updateFoodfact(product, timestamp, done);		        
 			    });
-		    })(barcode);
+		    })(product);
 	    }
 	    
 	    batch.end(function(err, users){
+	    	if(err)
+	    		console.log(err);
 	    	console.log("buildNutritionalData finished");
 	    	done();
 	    });
@@ -61,45 +144,50 @@ function checkAllFoodfacts(done){
  * et sauve les en cache.
  * "http://fr.openfoodfacts.org/api/v0/produit/"+ barcode +".json"
  */
-function checkFoodfact(barcode, done){
+function updateFoodfact(product, timestamp, done){
 	// vérifie si elle sont présentes en base.
-	FoodFact.findBarcode(barcode,function(err,foodfact) {
-		if(foodfact && foodfact.length>0) {
+	FoodFact.byBarcode(product.code,function(err,foodfact) {
+		if(foodfact && foodfact.length>0)
+			foodfact=foodfact[0];
+		if(foodfact && foodfact.last_update && foodfact.last_update.getTime()==timestamp.getTime()) {
 			return done();
 		}	
-		var openFoodFactsClient = Request.newClient('http://fr.openfoodfacts.org/');
 		// si non présentes : récupérer depuis openfood facts.
-		openFoodFactsClient.get("api/v0/produit/"+ barcode +".json", function(err, res, body){
+		openFoodFactsClient.get("api/v0/produit/"+ product.code +".json", function(err, res, body){
 			if(err){
 				console.log("unexpected error :",err);
 				return done();
 			}
-			
-			if(body.status==0){
-				console.log(">>",barcode,":",body.status_verbose);
-				// tag product as not in openfoodfacts.
-				var foodfact = {code : ""+barcode };
-				FoodFact.create(foodfact, function(err, foodfact) {
-					if(err)
-				   	   console.log(err);
-				    return done();
-				});
-				return;
+			var create = false;
+			if(!foodfact || !foodfact.code){
+				create=true;
+				foodfact = {
+					shop_label : product.label,
+					code : ""+product.code,
+				};
 			}
 			
-			var foodfact = {
-				name : body.product.product_name,
-				code : body.product.code,
-				//aditives : body.product.additives_tags,
-				//nurtiments : body.product.nutriments,
-				//traces : body.product.traces_tags
-			};
-			console.log(">>",barcode,":",foodfact);
-			FoodFact.create(foodfact, function(err, foodfact) {
-		       if(err)
-		    	   console.log(err);
-		       return done();
-			});
+			foodfact.last_update=timestamp;
+			
+			if(body.status!=0){
+				foodfact.name = body.product.product_name;
+				if(body.product.nutriments){
+					foodfact.energy = body.product.nutriments.energy;
+					foodfact.energy_unit = body.product.nutriments.energy_unit;
+					// foodfact.nutriments = body.product.nutriments;
+				}
+			}			
+			
+			console.log(">>",product.code,":",foodfact);
+			if(create){
+				FoodFact.create(foodfact, function(err, foodfact) {
+			       return done(err);
+				});
+			} else {
+				foodfact.save(function(err,foodfact){
+				    return done(err);
+				});
+			}
 		});
 	});
 }
@@ -109,25 +197,35 @@ function checkFoodfact(barcode, done){
  */
 function buildAllStats(done){
 	// 1/ clear all stats data.
-	// 2/ build stats.
-	Receipt.all(function(err, allReceipt) {
-	    if(err != null) {
-	      console.log("error : ", err);
-	      return done("error");
-	    }
-	    var opCount = 0;
-	    for (idx in allReceipt) {
-	    	opCount ++;
-	        receipt = allReceipt[idx];
-	        buildReceiptStat(receipt, function(err){terminate(err);});
-	    }
-	    
-	    function terminate(err){
-	    	opCount--;
-	    	if(opCount==0)
-	    		done(err);
-	    }
-	  });
+	cleanAllStats(function(){
+		// 2/ build stats.
+		Receipt.all(function(err, allReceipt) {
+		    if(err != null) {
+		      console.log("error : ", err);
+		      return done("error");
+		    }
+		    var batch = new Batch;
+		    batch.concurrency(1);
+
+		    for (idx in allReceipt) {
+		        var receipt = allReceipt[idx];
+		        console.log("pushing ",receipt.receiptId);
+		        (function(receipt){
+			        batch.push(function(done2){
+			        	console.log("pulling ",receipt.receiptId);
+			        	buildReceiptStat(receipt, done2);
+			        });
+		        })(receipt);
+		    }
+		    
+		    batch.end(function(err, users){
+		    	if(err)
+		    		console.log(err);
+		    	console.log("buildNutritionalData finished");
+		    	done();
+		    });
+		  });
+	});
 }
 
 /**
@@ -137,51 +235,56 @@ function buildAllStats(done){
 function buildReceiptStat(receipt, done){
 	if(!receipt)
 		done();
-	receiptId = receipt.receiptId;
-    timestamp = receipt.timestamp;
-	ReceiptStat.byReceiptId(receiptId, function(err, receiptStat){
-		if(err != null) {
-	      console.log("error : ", err);
-	      return done("error");
-	    }
-		ReceiptDetail.byReceiptId(receiptId, function(err, receiptDetails) {
-		    if(err != null) {
-		      console.log("error : ", err);
-		      return done("error");
-		    }
-		    var opCount = 0;
-		    for (idx in receiptDetails) {
-		    	opCount ++;
-		        receiptDetail = receiptDetails[idx];
-		        barcode = receiptDetail.barcode;
-		        FoodFacts.byBarcode(barcode,function(err,foodfact) {
-		    		if(!foodfact)
-		    			return terminate(0);
-		    		accumulateNutriments(receiptStat,foodfact);
-		    		terminate(0);
-		        });
-		    }
-		    
-		    function terminate(err){
-		    	opCount--;
-		    	if(opCount==0){
-		    		receiptStat.save(function(err,receiptStat){
-		    			done(err);
-		    		});
-		    	}
-		    }
-		  });		
-    });
     
+	var receiptStat = {
+			_id:receipt.receiptId,
+			receiptId : receipt.receiptId,
+			timestamp : receipt.timestamp,
+			energy    : 0,
+			energy_unit : 'kj'
+	};
+
+	ReceiptDetail.byReceiptId(receipt.receiptId, function(err, receiptDetails) {
+		if(err != null) {
+			console.log("error : ", err);
+			return done("error");
+		}
+		// calcule 
+		var batch = new Batch;
+		batch.concurrency(5);
+		for (idx in receiptDetails) {
+			receiptDetail = receiptDetails[idx];
+			var barcode = receiptDetail.barcode;
+			batch.push(function(done) {
+				FoodFacts.byBarcode(barcode,function(err,foodfact) {
+					if(!foodfact)
+						return done();
+					receiptStat.energy += foodfact.energy;
+					if(receiptStat.energy_unit != foodfact.energy_unit){
+						console.log("WARNING : UNITS ARE DIFFERENTS :",receiptStat.energy_unit,foodfact.energy_unit);
+					}
+					done();
+				});
+			});
+		}
+
+		batch.end(function(err, users){
+			console.log("buildReceiptStat finished");
+			ReceiptStat.create(receiptStat, function(err, receiptStat) {
+				return done(err);
+			});
+		});
+	});		
 }
 
-function accumulateNutriments(receiptStat, foodfact){
-	if(!receiptStat.nutriment){
-		receiptStat.nutriment = {};
-	}
-	receiptStat.nutriment = { energy : sumValues (receiptStat.nutriment.energy, foodfact.nutriments.energy) };
+function getReceiptStats(done){
+	ReceiptStat.byTimestamp(function(err, receiptStat) {
+		if(err){
+			return done("error :"+err);
+		}
+		return done(receiptStat);
+	});
 }
-
 /**
  * retourne la somme des 2 valeurs si définies.
  * @param val1
@@ -198,3 +301,32 @@ function sumValues(val1, val2){
 	return 0;
 }
 
+/**
+ * retourne la liste complete des produits qui n'ont pas d'informations nutritionnelles.
+ */
+function getInvalidProducts(done){
+	FoodFact.invalidProducts(function(err, products) {
+	    if(err != null) {
+	      console.log("error : ", err);
+	      return done("error");
+	    }
+	    
+//	    batch = new Batch;
+//	    batch.concurrency(1);
+//	    
+//	    for (idx in products) {
+//	        product = products[idx];
+//	        (function(product){
+//		        batch.push(function(done){
+//			        		        
+//			    });
+//		    })(product);
+//	    }
+//	    
+//	    batch.end(function(err, users){
+//	    	console.log("invalid products finished");
+//	    	done();
+//	    });
+	    return done(products);
+	});
+}

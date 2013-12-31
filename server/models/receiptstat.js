@@ -3,9 +3,8 @@ americano = require('americano');
 module.exports = ReceiptStat = americano.getModel('receiptstat', {
 	receiptId: String,
 	timestamp : Date,
-	aditives : [String],
-	nurtiments : [String, String],
-	traces : [String]
+	energy : Number,
+	energy_unit : String
 });
 
 ReceiptStat.all = function(callback) {
@@ -16,6 +15,16 @@ ReceiptStat.all = function(callback) {
             callback(null, instances);
         }
     );
+};
+
+ReceiptStat.truncate = function(callback){
+	ReceiptStat.requestDestroy(
+	        "all", 
+	        {},
+	        function(err, instances) {
+	            callback(null, instances);
+	        }
+	    );	
 };
 
 ReceiptStat.byReceiptId = function(receiptId, callback) {
@@ -31,7 +40,7 @@ ReceiptStat.byReceiptId = function(receiptId, callback) {
 ReceiptStat.byTimestamp = function(callback) {
 	ReceiptStat.request(
         "bytimestamp", 
-        { descending: true },
+        { descending: false },
         function(err, instances) {
             callback(null, instances);
         }

@@ -39,3 +39,12 @@ ReceiptDetail.byReceiptId = function(receiptId, callback) {
     );
 };
 
+ReceiptDetail.products = function(callback) {
+    ReceiptDetail.request(
+        "products", 
+        {},
+        function(err, instances) {
+            callback(null, instances);
+        }
+    );
+};

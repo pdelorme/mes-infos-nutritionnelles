@@ -12,8 +12,20 @@ module.exports = {
   'buildDatabase' : {
 	  get : Services.buildDatabase
   },
+  'buildAllStats' : {
+	  get : Services.buildAllStats
+  },
+  'receiptStats' : {
+	  get : Services.receiptStats
+  },
   'cleanDatabase' : {
 	  get : Services.cleanDatabase
+  },
+  'invalidProducts' : {
+	  get : Services.invalidProducts
+  },
+  'test' : {
+	  get : Services.test
   }
 };
 

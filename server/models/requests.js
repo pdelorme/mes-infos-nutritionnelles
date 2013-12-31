@@ -19,13 +19,47 @@ module.exports = {
           } else {
             emit(doc.receiptId, doc);
           }
+        },
+        products: {
+        	map: function(doc) {
+        		emit(doc.barcode, doc);
+        	},
+        	reduce: function (key, values, rereduce) {
+        		var maxTime;
+        		var meanPrice = 0;
+        		for(var i=0; i<values.length; i++){
+        			if(!maxTime || maxTime < values[i].timestamp){
+        				maxTime = values[i].timestamp;
+        			}
+        			meanPrice = meanPrice + values[0].price
+        		}
+        		meanPrice = meanPrice / values.length;
+        		return {
+        			_id : values[0].barcode,
+        			barcode : values[0].barcode,
+        			label : values[0].label,
+        			count : values.length,
+        			family: values[0].family,
+        			familyLabel : values[0].familyLabel,
+        			section: values[0].section,
+        			sectionLabel: values[0].sectionLabel,
+        			lastDate : maxTime,
+        			price : values[0].price,
+        			meanPrice:meanPrice
+        		}
+        	}
         }
     },
     foodfact: {
-        all: americano.defaultRequests.all,
-        byBarcode: function(doc) {
-          emit(doc.code, doc);
-        }
+    	all: americano.defaultRequests.all,
+    	byBarcode: function(doc) {
+    		emit(doc.code, doc);
+    	},
+    	invalidProducts: function(doc) {
+    		if(doc.nurtiments.length==0 || !doc.nurtiments.energy){
+    			emit(doc.code, doc);
+    		}
+    	}
     },
     receiptstat: {
         all: americano.defaultRequests.all,

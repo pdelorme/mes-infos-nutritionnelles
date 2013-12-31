@@ -3,9 +3,11 @@ americano = require('americano');
 module.exports = FoodFact = americano.getModel('FoodFact', {
 	name: String,
 	code : String,
-	aditives : [String],
-	nurtiments : [String, String],
-	traces : [String]
+	// nutriments : [String, String],
+	energy: Number,
+	energy_unit: String,
+	shop_label:String,
+	last_update: Date
 });
 
 FoodFact.all = function(callback) {
@@ -22,6 +24,16 @@ FoodFact.byBarcode = function(barcode, callback) {
 	FoodFact.request(
         "byBarcode", 
         { key : barcode },
+        function(err, instances) {
+            callback(null, instances);
+        }
+    );
+};
+
+FoodFact.invalidProducts = function(callback) {
+	FoodFact.request(
+        "invalidProducts", 
+        {},
         function(err, instances) {
             callback(null, instances);
         }

@@ -1,13 +1,15 @@
 var StatsView = require('./stats_view');
+var CoachView = require('./coach_view');
+var ControlView = require('./control_view');
 
 module.exports = AppView = Backbone.View.extend({
 
     el: 'body',
     template: require('../templates/home'),
     events: {
-        "click #statsButton": "statsView",
-        "click #coachButton": "coachView",
-        "click #controlButton": "controlView"
+        "click #stats": "statsView",
+        "click #coach": "coachView",
+        "click #control": "controlView"
     },
 
     // initialize is automatically called once after the view is constructed
@@ -34,10 +36,18 @@ module.exports = AppView = Backbone.View.extend({
     },
     
     coachView:function(event){
-    	this.$el.find('#tab-content').html("");
+		coachView = new CoachView({
+	        model: this.collection
+	    });
+	    coachView.render();
+	    this.$el.find('#tab-content').html(coachView.$el);
     },
     
     controlView:function(event){
-    	this.$el.find('#tab-content').html("");
+		controlView = new ControlView({
+	        model: this.collection
+	    });
+	    controlView.render();
+	    this.$el.find('#tab-content').html(controlView.$el);
     }
 });
