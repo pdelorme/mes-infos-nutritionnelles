@@ -6,16 +6,16 @@
     | Merci de saisir les données nutritionnelles avec soins.
 .col-md-3.text-center
   img(src="openfoodfacts-logo-fr.png")
-
+  
 .col-md-12
-  form(role="form")
+  form(role="form",action="postFoodfacts",method="post")
     table(class="table table-striped table-hover table-condensed")
       thead
-        th.col-md-2 référence intermarché
+        th.col-md-2 référence intermarché<br/>code bare
         th.col-md-1 dernière date d'achat
         th.col-md-3 nom de l'article
-        th.col-md-1 poid (en grammes)
-        th.col-md-1 calories (en KJoules)
+        th.col-md-1.text-center poid <br/>(en grammes)
+        th.col-md-1.text-center calories <br/>(en KJoules)
       tbody#products-body
         tr
           td(style="vertical-align:middle") Kiri 500G x6 portions 75G
@@ -32,13 +32,14 @@
     
 script#template-row(type="text/html")
   tr
-    td(style="vertical-align:middle") <%= code %>
-    td(style="vertical-align:middle")  timestamp 
+    - var barcode = "<%= barcode %>"
+    td(style="vertical-align:middle") <%= shop_label %><br/><%= barcode %>
+    td(style="vertical-align:middle") <%= last_update %>
     td
-      input.form-control(type="text",placeholder="Nom de l'article")
+      input.form-control(name!="name_#{barcode}",type="text",placeholder="Nom de l'article") <%= name?name:'' %>
     td
-      input.form-control(type="text", placeholder="Grammes")
+      input.form-control(name!="weight_#{barcode}",type="text", placeholder="Grammes") <%= weight?weight:'' %>
     td
-      input.form-control(type="text", placeholder="Kilo Joules")
+      input.form-control(name!="energy_#{barcode}",type="text", placeholder="Kilo Joules") <%= energy?energy:'' %>
     
   

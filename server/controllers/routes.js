@@ -24,6 +24,9 @@ module.exports = {
   'invalidProducts' : {
 	  get : Services.invalidProducts
   },
+  'postFoodfacts' : {
+	  post : Services.postFoodfacts
+  },
   'test' : {
 	  get : Services.test
   }

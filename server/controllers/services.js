@@ -33,7 +33,17 @@ module.exports.receiptStats = function(req, res){
 
 module.exports.invalidProducts = function(req, res) {
 	getInvalidProducts(function(products){
+	    res.send(200, products);
+	});
+};
+
+module.exports.postFoodfacts = function(req, res) {
+	postFoodfacts(req.body, function(err){
+		if(err)
+			return res.send(200, "OK");
+		getInvalidProducts(function(products){
 			res.send(200, products);
+		});
 	});
 };
 
@@ -348,5 +358,58 @@ function getInvalidProducts(done){
 //	    	done();
 //	    });
 	    return done(products);
+	});
+}
+
+/**
+ * post les changements de produits.
+ * @param req
+ * @param done
+ */
+function postFoodfacts(params, done){
+	// calcule 
+	var batch = new Batch;
+	batch.concurrency(15);
+
+	for (key in params) {
+		if(key.substring(0, 4) == "name"){
+			var barcode = key.substring(5);
+			var newFoodfact = {
+				barcode :barcode,	
+				name   : params["name_"+barcode].trim(),
+				energy : params["energy_"+barcode].trim(),
+				energy_unit : "Kj",
+				weight : params["weight_"+barcode].trim()
+			};
+			if(newFoodfact.name.length + newFoodfact.energy.length + newFoodfact.weight.length > 0) {
+				(function(newFoodfact){
+					batch.push(function(done) {
+						FoodFact.byBarcode(newFoodfact.barcode,function(err,foodfact) {
+							if(!foodfact || foodfact.length==0) {
+								console.log("barcode invalide");
+								return done();
+							}
+							foodfact = foodfact[0];
+							if(newFoodfact.name.length>0)
+								foodfact.name = newFoodfact.name;
+							if(newFoodfact.energy.length>0) {
+								foodfact.energy = newFoodfact.energy;
+								foodfact.energy_unit = newFoodfact.energy_unit;
+							}
+							if(newFoodfact.weight.length>0)
+								foodfact.weight = newFoodfact.weight;
+							foodfact.save(function(){
+								done();
+							});
+						});
+					});
+				})(newFoodfact);
+			}
+		}
+	}
+	
+	batch.end(function(err, users){
+		console.log("post FoodFacts finished");
+		return done(err);
 	});
 }
