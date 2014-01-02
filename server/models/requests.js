@@ -53,11 +53,11 @@ module.exports = {
     foodfact: {
     	all: americano.defaultRequests.all,
     	byBarcode: function(doc) {
-    		emit(doc.code, doc);
+    		emit(doc.barcode, doc);
     	},
     	invalidProducts: function(doc) {
-    		if(doc.nurtiments.length==0 || !doc.nurtiments.energy){
-    			emit(doc.code, doc);
+    		if(!doc.energy || doc.energy==0){
+    			emit(doc.barcode, doc);
     		}
     	}
     },

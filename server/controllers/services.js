@@ -6,7 +6,9 @@ var openFoodFactsClient = Request.newClient('http://fr.openfoodfacts.org/');
 
 module.exports.cleanDatabase = function(req, res) {
 	cleanDatabase(function(){
-		res.send(200, "OK");
+		cleanAllStats(function(){
+			res.send(200, "OK");
+		});
 	});
 };
 
@@ -37,7 +39,7 @@ module.exports.invalidProducts = function(req, res) {
 
 module.exports.test = function(req, res){
 	var product = {
-			code : '3228021950129',
+			barcode : '3228021950129',
 			label : 'test'
 	};
 	updateFoodfact(product, new Date(), function(){
@@ -51,24 +53,34 @@ module.exports.test = function(req, res){
  */
 function cleanDatabase(done){
 	console.log("cleaning database");
-	FoodFact.all(function(err, foodfacts) {
+	FoodFact.truncate(function(err, stats) {
 	    if(err != null) {
 	      console.log("error : ", err);
-	      return;
 	    }
-	    var batch = new Batch;
-	    batch.concurrency(10);
-	    for (idx in foodfacts) {
-	    	foodfact = foodfacts[idx];
-	    	batch.push(function(done) { 
-	    		foodfact.destroy();
-	    	});
-	    }
-	    batch.end(function(err, users){
-	    	console.log("cleanDatabase finished");
-	    	done();
-	    });
+	    done();
 	});
+//	FoodFact.all(function(err, foodfacts) {
+//	    if(err != null) {
+//	      console.log("error : ", err);
+//	      return;
+//	    }
+//	    var batch = new Batch;
+//	    batch.concurrency(10);
+//	    for (idx in foodfacts) {
+//	    	foodfact = foodfacts[idx];
+//	    	(function(foodfact){
+//		    	batch.push(function(done) { 
+//		    		foodfact.destroy(function(){
+//		    			done();
+//		    		});
+//		    	});
+//	    	})(foodfact);
+//	    }
+//	    batch.end(function(err, users){
+//	    	console.log("cleanDatabase finished");
+//	    	done();
+//	    });
+//	});
 }
 
 /**
@@ -146,24 +158,28 @@ function updateAllFoodfacts(done){
  */
 function updateFoodfact(product, timestamp, done){
 	// vérifie si elle sont présentes en base.
-	FoodFact.byBarcode(product.code,function(err,foodfact) {
-		if(foodfact && foodfact.length>0)
-			foodfact=foodfact[0];
+	FoodFact.byBarcode(product.barcode,function(err,foodfact) {
+		if(foodfact) {
+			if(foodfact.length>0)
+				foodfact=foodfact[0];
+			else 
+				foodfact = undefined;
+		}
 		if(foodfact && foodfact.last_update && foodfact.last_update.getTime()==timestamp.getTime()) {
 			return done();
 		}	
 		// si non présentes : récupérer depuis openfood facts.
-		openFoodFactsClient.get("api/v0/produit/"+ product.code +".json", function(err, res, body){
+		openFoodFactsClient.get("api/v0/produit/"+ product.barcode +".json", function(err, res, body){
 			if(err){
 				console.log("unexpected error :",err);
 				return done();
 			}
 			var create = false;
-			if(!foodfact || !foodfact.code){
+			if(!foodfact || !foodfact.barcode){
 				create=true;
 				foodfact = {
 					shop_label : product.label,
-					code : ""+product.code,
+					barcode : ""+product.barcode,
 				};
 			}
 			
@@ -178,7 +194,7 @@ function updateFoodfact(product, timestamp, done){
 				}
 			}			
 			
-			console.log(">>",product.code,":",foodfact);
+			console.log(">>",product.barcode,":",foodfact);
 			if(create){
 				FoodFact.create(foodfact, function(err, foodfact) {
 			       return done(err);
@@ -241,7 +257,7 @@ function buildReceiptStat(receipt, done){
 			receiptId : receipt.receiptId,
 			timestamp : receipt.timestamp,
 			energy    : 0,
-			energy_unit : 'kj'
+			energy_unit : 'Kj'
 	};
 
 	ReceiptDetail.byReceiptId(receipt.receiptId, function(err, receiptDetails) {
@@ -255,17 +271,21 @@ function buildReceiptStat(receipt, done){
 		for (idx in receiptDetails) {
 			receiptDetail = receiptDetails[idx];
 			var barcode = receiptDetail.barcode;
-			batch.push(function(done) {
-				FoodFacts.byBarcode(barcode,function(err,foodfact) {
-					if(!foodfact)
-						return done();
-					receiptStat.energy += foodfact.energy;
-					if(receiptStat.energy_unit != foodfact.energy_unit){
-						console.log("WARNING : UNITS ARE DIFFERENTS :",receiptStat.energy_unit,foodfact.energy_unit);
-					}
-					done();
+			(function(barcode){
+				batch.push(function(done) {
+					FoodFact.byBarcode(barcode,function(err,foodfact) {
+						if(!foodfact || foodfact.length==0)
+							return done();
+						foodfact = foodfact[0];
+						if(foodfact.energy)
+							receiptStat.energy += foodfact.energy;
+						if(receiptStat.energy_unit != foodfact.energy_unit){
+							console.log("WARNING : UNITS ARE DIFFERENTS :",receiptStat.energy_unit,foodfact.energy_unit);
+						}
+						done();
+					});
 				});
-			});
+			})(barcode);
 		}
 
 		batch.end(function(err, users){
