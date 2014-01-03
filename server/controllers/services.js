@@ -1,8 +1,11 @@
-var Request = require('request-json');
+var Request = require('request');
+var JsonRequest = require('request-json');
+var QueryString = require('query-string');
 var Batch = require('batch');
 var FoodFact = require('../models/foodfact');
 var ReceiptStat = require('../models/receiptstat');
-var openFoodFactsClient = Request.newClient('http://fr.openfoodfacts.org/');
+var openFoodFactsClient = JsonRequest.newClient('http://fr.openfoodfacts.org/');
+
 
 module.exports.cleanDatabase = function(req, res) {
 	cleanDatabase(function(){
@@ -47,7 +50,7 @@ module.exports.postFoodfacts = function(req, res) {
 	});
 };
 
-module.exports.test = function(req, res){
+module.exports.testUpdate = function(req, res){
 	var product = {
 			barcode : '3228021950129',
 			label : 'test'
@@ -57,6 +60,19 @@ module.exports.test = function(req, res){
 	});
 };
 
+
+module.exports.test = function(req, res){
+	var product = {
+			barcode : '3073780969000',
+			name : 'KIRI GOUTER 280G 8 PORTIONS',
+			energy: 500,
+			energy_unit: "kJ",
+			weight: 282
+	};
+	postOpenFoodFact(product, function(offResp){
+		res.send(offResp);
+	});
+};
 /**
  * deletes all data related to the application.
  * @param done
@@ -340,23 +356,6 @@ function getInvalidProducts(done){
 	      console.log("error : ", err);
 	      return done("error");
 	    }
-	    
-//	    batch = new Batch;
-//	    batch.concurrency(1);
-//	    
-//	    for (idx in products) {
-//	        product = products[idx];
-//	        (function(product){
-//		        batch.push(function(done){
-//			        		        
-//			    });
-//		    })(product);
-//	    }
-//	    
-//	    batch.end(function(err, users){
-//	    	console.log("invalid products finished");
-//	    	done();
-//	    });
 	    return done(products);
 	});
 }
@@ -412,4 +411,44 @@ function postFoodfacts(params, done){
 		console.log("post FoodFacts finished");
 		return done(err);
 	});
+}
+/**
+ * <input type="file" accept="image/*" class="img_input" name="imgupload_front" id="imgupload_front" data-url="/cgi/product_image_upload.pl" multiple="">
+ * @param foodfact
+ */
+function postOpenFoodFact(foodfact, done){
+	var data = {
+		code     : foodfact.barcode,
+		user_id  : "mesinfosnutritionelles",
+		password : "mesinfos",
+		product_name : foodfact.name?foodfact.name:foodfact.shop_label,
+		quantity : foodfact.weight?""+foodfact.weight+" g":undefined,
+		stores:"Intermarché",
+		nutriment_energy:foodfact.energy,
+		nutriment_energy_unit:foodfact.energy_unit,
+		nutrition_data_per:"serving"
+	};
+	Request.post('http://fr.openfoodfacts.org/cgi/product_jqm.pl', 
+	//Request.post('http://localhost:8888/test', 
+		{form:data},
+		function (error, response, body) {
+	        if (!error && response.statusCode == 200) {
+	            console.log(body);
+	            done(response);
+	        }
+	    }
+	);
+
+	
+//	var postData = QueryString.stringify(data);
+//	openFoodFactsClient.post(
+//	    "cgi/product_jqm.pl",
+//	    postData,
+//	    function (error, response, body) {
+//	        if (!error && response.statusCode == 200) {
+//	            console.log(body);
+//	            done(response);
+//	        }
+//	    }
+//	);
 }

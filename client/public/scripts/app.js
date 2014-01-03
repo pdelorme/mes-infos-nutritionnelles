@@ -233,15 +233,7 @@ attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow |
 var buf = [];
 with (locals || {}) {
 var interp;
-buf.push('<div class="col-md-9"><H2> Ecran de controle</H2><p>Ce formulaire vous permet de lister les produits dont les informations nutritionnelles n\'ont pas été saisies dans la base de données openfood facts.<br/>\nles informations saisies ici seront envoyées à OpenFoodFacts pour réutilisation par d\'autre personnes du panel MesInfos et plus généralement par tous les utilisateurs de la base de donnée ouverte Open food Facts.<br/>\nMerci de saisir les données nutritionnelles avec soins.</p></div><div class="col-md-3 text-center"><img src="openfoodfacts-logo-fr.png"/></div><div class="col-md-12"><form role="form" action="postFoodfacts" method="post"><table class="table table-striped table-hover table-condensed"><thead><th class="col-md-2">référence intermarché<br/>code bare</th><th class="col-md-1">dernière date d\'achat</th><th class="col-md-3">nom de l\'article</th><th class="col-md-1 text-center">poid <br/>(en grammes)</th><th class="col-md-1 text-center">calories <br/>(en KJoules)</th></thead><tbody id="products-body"><tr><td style="vertical-align:middle">Kiri 500G x6 portions 75G</td><td style="vertical-align:middle">25/12/1969</td><td><input type="text" placeholder="Nom de l\'article" class="form-control"/></td><td><input type="text" placeholder="Grammes" class="form-control"/></td><td><input type="text" placeholder="Kilo Joules" class="form-control"/></td></tr></tbody><tfoot><td colspan="5"> merci pour vos données</td></tfoot></table><button type="submit" class="btn btn-primary">Envoyer les modifications</button></form></div><script id="template-row" type="text/html"><tr>');
- var barcode = "<%= barcode %>"
-buf.push('<td style="vertical-align:middle"><%= shop_label %><br/><%= barcode %></td><td style="vertical-align:middle"><%= last_update %></td><td><input');
-buf.push(attrs({ 'name':("name_" + (barcode) + ""), 'type':("text"), 'placeholder':("Nom de l'article"), "class": ('form-control') }, {"name":false,"type":true,"placeholder":true}));
-buf.push('/></td><td><input');
-buf.push(attrs({ 'name':("weight_" + (barcode) + ""), 'type':("text"), 'placeholder':("Grammes"), "class": ('form-control') }, {"name":false,"type":true,"placeholder":true}));
-buf.push('/></td><td><input');
-buf.push(attrs({ 'name':("energy_" + (barcode) + ""), 'type':("text"), 'placeholder':("Kilo Joules"), "class": ('form-control') }, {"name":false,"type":true,"placeholder":true}));
-buf.push('/></td></tr></script>');
+buf.push('<div class="col-md-9"><H2> Ecran de controle</H2><p>Ce formulaire vous permet de lister les produits dont les informations nutritionnelles n\'ont pas été saisies dans la base de données openfood facts.<br/>\nles informations saisies ici seront envoyées à OpenFoodFacts pour réutilisation par d\'autre personnes du panel MesInfos et plus généralement par tous les utilisateurs de la base de donnée ouverte Open food Facts.<br/>\nMerci de saisir les données nutritionnelles avec soins.</p></div><div class="col-md-3 text-center"><img src="openfoodfacts-logo-fr.png"/></div><div class="col-md-12"><form role="form" action="postFoodfacts" method="post"><table class="table table-striped table-hover table-condensed"><thead><th colspan="5"><button type="submit" class="btn btn-primary">Envoyer les modifications</button></th></thead><thead><th class="col-md-2">référence intermarché<br/>code bare</th><th class="col-md-1">dernière date d\'achat</th><th class="col-md-2">nom de l\'article</th><th class="col-md-1 text-center">poid <br/>(en grammes)</th><th class="col-md-1 text-center">calories <br/>(en KJoules)</th></thead><tbody id="products-body"></tbody><tfoot><td colspan="5"><button type="submit" class="btn btn-primary">Envoyer les modifications</button></td></tfoot></table></form></div><script id="template-row" type="text/html"><tr><td style="vertical-align:middle"> <table><tr><td><img src="http://drive.intermarche.com/ressources/images/produit/vignette/0<%= barcode %>.jpg" width="53" height="53" class="image"/></td><td><%= shop_label %><br/><%= barcode %></td></tr></table></td><td style="vertical-align:middle"><%= last_update %></td><td><input name="name_<%= barcode %>" type="text" placeholder="Nom de l\'article" value="<%= name?name:\'\' %>" class="form-control"/></td><td><input name="weight_<%= barcode %>" type="text" placeholder="Grammes" class="form-control"/></td><td><input name="energy_<%= barcode %>" type="text" placeholder="Kilo Joules" class="form-control"/></td></tr></script>');
 }
 return buf.join("");
 };
@@ -371,6 +363,7 @@ module.exports = StatsView = Backbone.View.extend({
     tagName: 'div',
     template: require('../templates/control'),
     events: {
+    	"submit form":"postData"
         //"click .receipt": "toggleSections",    
         //"click .toggle": "toggleSectionsNoDefault"    
     },
@@ -390,12 +383,41 @@ module.exports = StatsView = Backbone.View.extend({
     	var that = this;
     	var productBody = this.$el.find("#products-body");
     	var productRowTemplate = _.template(this.$el.find("#template-row").html());
-    	productBody.html("");
     	$.getJSON('invalidProducts', function(data) {
+        	productBody.html("");
     		$.each(data, function(key, val) {
     			productBody.append(productRowTemplate(val));
     		});
     	});
+    },
+    
+    postData: function(e){
+    	e.preventDefault();
+    	var formData = $("form").serialize();
+    	var productBody = this.$el.find("#products-body");
+    	var productRowTemplate = _.template(this.$el.find("#template-row").html());
+    	
+    	$.ajax({
+		  type: "POST",
+		  url: 'postFoodfacts',
+		  data: formData,
+		  dataType: "json",
+          beforeSend: function(){$("#modal-overlay").show();},
+          complete: function(){$("#modal-overlay").hide();},
+		  success: function(data) {
+	        	productBody.html("");
+	    		$.each(data, function(key, val) {
+	    			productBody.append(productRowTemplate(val));
+	    		});
+	    	},
+		});
+    	
+//    	$.postJSON('postFoodfacts', formData, function(data) {
+//        	productBody.html("");
+//    		$.each(data, function(key, val) {
+//    			productBody.append(productRowTemplate(val));
+//    		});
+//    	});
     }
     
 });

@@ -11,35 +11,33 @@
   form(role="form",action="postFoodfacts",method="post")
     table(class="table table-striped table-hover table-condensed")
       thead
+        th(colspan="5")
+          button.btn.btn-primary(type="submit") Envoyer les modifications
+      thead
         th.col-md-2 référence intermarché<br/>code bare
         th.col-md-1 dernière date d'achat
-        th.col-md-3 nom de l'article
+        th.col-md-2 nom de l'article
         th.col-md-1.text-center poid <br/>(en grammes)
         th.col-md-1.text-center calories <br/>(en KJoules)
       tbody#products-body
-        tr
-          td(style="vertical-align:middle") Kiri 500G x6 portions 75G
-          td(style="vertical-align:middle") 25/12/1969
-          td
-            input.form-control(type="text",placeholder="Nom de l'article")
-          td
-            input.form-control(type="text", placeholder="Grammes")
-          td
-            input.form-control(type="text", placeholder="Kilo Joules")
       tfoot
-        td(colspan="5")  merci pour vos données
-    button.btn.btn-primary(type="submit") Envoyer les modifications
+        td(colspan="5")
+          button.btn.btn-primary(type="submit") Envoyer les modifications
+    
     
 script#template-row(type="text/html")
   tr
-    - var barcode = "<%= barcode %>"
-    td(style="vertical-align:middle") <%= shop_label %><br/><%= barcode %>
+    td(style="vertical-align:middle") 
+      table
+        tr
+          td
+            img.image(src!='http://drive.intermarche.com/ressources/images/produit/vignette/0<%= barcode %>.jpg',width="53",height="53")
+          td
+            | <%= shop_label %><br/><%= barcode %>
     td(style="vertical-align:middle") <%= last_update %>
     td
-      input.form-control(name!="name_#{barcode}",type="text",placeholder="Nom de l'article") <%= name?name:'' %>
+      input.form-control(name!="name_<%= barcode %>",type="text",placeholder="Nom de l'article",value!="<%= name?name:'' %>")
     td
-      input.form-control(name!="weight_#{barcode}",type="text", placeholder="Grammes") <%= weight?weight:'' %>
+      input.form-control(name!="weight_<%= barcode %>",type="text", placeholder="Grammes",value!="<%= weight?weight:'' %>)
     td
-      input.form-control(name!="energy_#{barcode}",type="text", placeholder="Kilo Joules") <%= energy?energy:'' %>
-    
-  
+      input.form-control(name!="energy_<%= barcode %>",type="text", placeholder="Kilo Joules",value!="<%= energy?energy:'' %>)

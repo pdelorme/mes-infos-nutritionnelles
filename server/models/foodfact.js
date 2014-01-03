@@ -6,6 +6,7 @@ module.exports = FoodFact = americano.getModel('FoodFact', {
 	// nutriments : [String, String],
 	energy: Number,
 	energy_unit: String,
+	weight: Number,
 	shop_label:String,
 	last_update: Date
 });

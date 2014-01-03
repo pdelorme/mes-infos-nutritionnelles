@@ -56,7 +56,7 @@ module.exports = {
     		emit(doc.barcode, doc);
     	},
     	invalidProducts: function(doc) {
-    		if(!doc.energy || doc.energy==0){
+    		if(!doc.energy || doc.energy==0 || !doc.name || doc.name.trim().length==0){
     			emit(doc.barcode, doc);
     		}
     	}
