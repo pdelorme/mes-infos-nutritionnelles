@@ -617,19 +617,24 @@ module.exports = StatsView = Backbone.View.extend({
 		    panEnabled: true, 
 			title:{
 				text: "Energie",
+				fontSize:15,
+				fontFamily:"arial",
+				fontWeight:"normal",
 				padding:0,
 				maring:0,
 				verticalAlign: "top", // "top", "center", "bottom"
-		        horizontalAlign: "center" // "left", "right", "center"
+		        horizontalAlign: "left" // "left", "right", "center"
 		        	
 			}, 
 			axisX:{
-			   labelAngle: 50,
+			   //labelAngle: 50,
 			   valueFormatString: "D MMM",
+			   labelFontFamily:"arial",
+			   labelFontSize:1,
 			   lineThickness:0,
 			   gridThickness:0,
 			   tickThickness:0,
-			   interval:1,
+			   interval:1000,
 			   intervalType:"week"
 			},
 			axisY:{
@@ -647,8 +652,8 @@ module.exports = StatsView = Backbone.View.extend({
 				verticalAlign: "bottom",
 				horizontalAlign: "center",
 				fontSize: 15,
-				fontFamily: "Lucida Sans Unicode"
-
+				fontFamily: "arial",
+				fontColor:"gray"
 			},
 			data: [
 			       // energy
@@ -672,29 +677,40 @@ module.exports = StatsView = Backbone.View.extend({
 			    	   },
 			    	   dataPoints: energyPoints,
 			    	   indexLabelPlacement:"outside",
-			    	   indexLabelAngle:50,
-			    	   //indexLabel: "{y}"
+			    	   indexLabelOrientation:"vertical",
+			    	   indexLabelFontSize:15,
+			    	   indexLabelFontFamily: "arial",
+			    	   indexLabel: "{x}"
 			       }
 			 ]
 		});
 		var chartNutrition = new CanvasJS.Chart(chartNutritionContainer,{
 			zoomEnabled: true,
 		    panEnabled: true, 
+		    toolTip: {
+		        shared: "true"  //disable here. 
+		      },
 			title:{
-				text: "Eléments Nutritionnels",
+				text: "Composition Nutritionnelle",
+				fontFamily:"arial",
+				fontSize:15,
+				fontWeight:"normal",
 				padding:0,
 				maring:0,
 				verticalAlign: "top", // "top", "center", "bottom"
-		        horizontalAlign: "center" // "left", "right", "center"
+		        horizontalAlign: "left" // "left", "right", "center"
 		        	
 			}, 
 			axisX:{
 			   labelAngle: 50,
 			   valueFormatString: "D MMM",
+			   labelFontFamily:"arial",
+			   labelFontSize:1,
+			   labelFontWeight:"normal",
 			   lineThickness:0,
 			   gridThickness:0,
-			   tickThickness:0,
-			   interval:1,
+			   tickThickness:1,
+			   interval:1000,
 			   intervalType:"week"
 			},
 			axisY:{
@@ -711,8 +727,8 @@ module.exports = StatsView = Backbone.View.extend({
 				verticalAlign: "bottom",
 				horizontalAlign: "center",
 				fontSize: 15,
-				fontFamily: "Lucida Sans Unicode"
-
+				fontFamily: "arial",
+				fontColor:"gray"
 			},
 			data: [
 			       // fat
@@ -770,8 +786,10 @@ module.exports = StatsView = Backbone.View.extend({
 			    	   },
 			    	   dataPoints: carbohydratesPoints,
 			    	   indexLabelPlacement:"outside",
-			    	   indexLabelAngle:50,
-			    	   //indexLabel: "{y}"
+			    	   indexLabelOrientation:"vertical",
+			    	   indexLabelFontSize:15,
+			    	   indexLabelFontFamily: "arial",
+			    	   indexLabel: "{x}"
 			       },
 			       {
 			    	   type: "stackedArea",
