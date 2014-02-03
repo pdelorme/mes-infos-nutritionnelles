@@ -15,7 +15,8 @@
     "request" : "~2.30",
     "request-json" : "~0.4.4",
     "batch" :"~0.5.0",
-    "query-string" :"~0.1"
+    "query-string" :"~0.1",
+    "form-data" :""
   },
   "engines": [
     "node = 0.8.x"

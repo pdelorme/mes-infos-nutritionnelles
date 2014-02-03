@@ -1,10 +1,10 @@
 //var SectionView = require('./section');
 var ReceiptCollection = require('../collections/receipts');
 
-module.exports = ControlView = Backbone.View.extend({
+module.exports = DataView = Backbone.View.extend({
 
     tagName: 'div',
-    template: require('../templates/control'),
+    template: require('../templates/data'),
     events: {
     	"submit form":"postData",
     	"change input.form-control" : "formChange"
@@ -14,11 +14,14 @@ module.exports = ControlView = Backbone.View.extend({
 
     initialize: function() {
         // this.collection = new ReceiptCollection([], { receiptId: this.model.attributes.receiptId });
-        
+        this.day = this.options.day;
+        this.statsView = this.options.statsView;
     },
 
     render: function() {
-        this.$el.html(this.template());
+    	var headerTemplate = _.template($(this.template()).find("#header").html());
+        var html = headerTemplate({day:this.day});
+    	this.$el.html(html);
         this.getData();
     },
     
@@ -26,9 +29,8 @@ module.exports = ControlView = Backbone.View.extend({
     	// asks server for product without infos.
     	var that = this;
     	var productBody = this.$el.find("#products-body");
-    	productBody.html("");
-    	var productRowTemplate = _.template(this.$el.find("#template-row").html());
-    	$.getJSON('invalidProducts', function(data) {
+    	var productRowTemplate = _.template($(this.template()).find("#template-row").html());
+    	$.getJSON('dayFacts?day='+this.day, function(data) {
         	productBody.html("");
     		$.each(data, function(key, val) {
     			productBody.append(productRowTemplate(val));
@@ -39,19 +41,18 @@ module.exports = ControlView = Backbone.View.extend({
     postData: function(e){
     	e.preventDefault();
     	var formData = $("form").serialize();
-    	var productBody = this.$el.find("#products-body");
-    	var productRowTemplate = _.template(this.$el.find("#template-row").html());
     	var that = this;
     	
     	$.ajax({
 		  type: "POST",
 		  url: 'postFoodfacts',
 		  data: formData,
-		  dataType: "json",
+		  //dataType: "json",
           beforeSend: function(){$("#modal-overlay").show();},
-          complete: function(){$("#modal-overlay").hide();},
+          complete: function(){ $("#modal-overlay").hide();},
 		  success: function(data) {
-	        	that.getData();
+			  that.getData();
+			  that.statsView.updateChart();
 	    	},
 		});
     	

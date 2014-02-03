@@ -1,5 +1,13 @@
-H1 Statistiques d'achat nutritionnelles.
-div#chartContainer
-button(type="button",class="btn btn-primary")  Recharger
+.col-md-9
+  H2  Statistiques d'achat nutritionnelles
+  p
+    | Ce diagramme montre les calories, protéines, lipides et glucides par date d'acaht et éttalé dans le temps.<br/>
+    | en cliquant sur une date, vous pourez voir la liste des achats du jour et cérifier/compléter les informations nutritionnelles de chaques produits afin de corriger votre diagramme.
+.col-md-3.text-center
+  img(src="openfoodfacts-logo-fr.png")
 
+#chartContainer.col-md-12.chart
+  div#chartEnergyContainer.col-md-6.chart
+  div#chartNutritionContainer.col-md-6.chart
+div#dataContainer
 

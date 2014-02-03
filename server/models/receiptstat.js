@@ -4,7 +4,13 @@ module.exports = ReceiptStat = americano.getModel('receiptstat', {
 	receiptId: String,
 	timestamp : Date,
 	energy : Number,
-	energy_unit : String
+	energy_unit : String,
+	fat : Number,
+	fat_unit : String,
+	proteins : Number,
+	proteins_unit : String,
+	carbohydrates : Number,
+	carbohydrates_unit : String
 });
 
 ReceiptStat.all = function(callback) {

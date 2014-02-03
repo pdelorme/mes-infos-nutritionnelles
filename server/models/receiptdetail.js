@@ -48,3 +48,13 @@ ReceiptDetail.products = function(callback) {
         }
     );
 };
+
+ReceiptDetail.productsByDay = function(day, callback) {
+    ReceiptDetail.request(
+        "productsByDay", 
+        {key:day},
+        function(err, instances) {
+            callback(null, instances);
+        }
+    );
+};

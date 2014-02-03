@@ -24,11 +24,17 @@ module.exports = {
   'invalidProducts' : {
 	  get : Services.invalidProducts
   },
+  'dayFacts' : {
+	  get : Services.dayFacts
+  },
   'postFoodfacts' : {
 	  post : Services.postFoodfacts
   },
   'test' : {
 	  get : Services.test
+  },
+  'dummy' : {
+	  get : Services.generateDummyData
   }
 };
 

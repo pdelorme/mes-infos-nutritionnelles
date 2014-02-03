@@ -48,7 +48,27 @@ module.exports = {
         			meanPrice:meanPrice
         		}
         	}
+        },
+        productsByDay: function(doc) {
+    		var date = new Date(doc.timestamp);
+    		var day = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    		emit(day, doc);
         }
+//      	,
+//        	reduce: function (key, values, rereduce) {
+//        		return {
+//        			_id : values[0].barcode,
+//        			barcode : values[0].barcode,
+//        			label : values[0].label,
+//        			count : values.length,
+//        			family: values[0].family,
+//        			familyLabel : values[0].familyLabel,
+//        			section: values[0].section,
+//        			sectionLabel: values[0].sectionLabel,
+//        			price : values[0].price
+//        		}
+//        	}
+//        }
     },
     foodfact: {
     	all: americano.defaultRequests.all,
@@ -56,7 +76,12 @@ module.exports = {
     		emit(doc.barcode, doc);
     	},
     	invalidProducts: function(doc) {
-    		if(!doc.energy || doc.energy==0 || !doc.name || doc.name.trim().length==0){
+    		if( !doc.energy || doc.energy==0 || 
+    			!doc.fat || doc.fat==0 || 
+    			!doc.carbohydrates || doc.carbohydrates==0 || 
+    			!doc.proteins || doc.proteins==0 || 
+    			!doc.name || doc.name.trim().length==0
+    		){
     			emit(doc.barcode, doc);
     		}
     	}

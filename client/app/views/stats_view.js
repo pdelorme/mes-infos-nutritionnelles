@@ -25,16 +25,31 @@ module.exports = StatsView = Backbone.View.extend({
     },
     
     updateChart: function (callback) {
-    	var dataPoints = [];
-    	var averagePoints = [];
-    	var chartContainer = this.$el.find("#chartContainer");
-		var chart = new CanvasJS.Chart(chartContainer,{
+    	var energyPoints = [];
+    	var fatPoints = [];
+    	var proteinsPoints = [];
+    	var carbohydratesPoints = [];
+    	var averageEnergyPoints = [];
+    	var averageFatPoints = [];
+    	var averageProteinsPoints = [];
+    	var averageCarbohydratesPoints = [];
+    	var chartEnergyContainer = this.$el.find("#chartEnergyContainer");
+    	var chartNutritionContainer = this.$el.find("#chartNutritionContainer");
+    	var that = this;
+		var chartEnergy = new CanvasJS.Chart(chartEnergyContainer,{
+			zoomEnabled: true,
+		    panEnabled: true, 
 			title:{
-				text: "Energy Chart"
+				text: "Energie",
+				padding:0,
+				maring:0,
+				verticalAlign: "top", // "top", "center", "bottom"
+		        horizontalAlign: "center" // "left", "right", "center"
+		        	
 			}, 
 			axisX:{
 			   labelAngle: 50,
-			   valueFormatString: "M/Y",
+			   valueFormatString: "D MMM",
 			   lineThickness:0,
 			   gridThickness:0,
 			   tickThickness:0,
@@ -42,72 +57,247 @@ module.exports = StatsView = Backbone.View.extend({
 			   intervalType:"week"
 			},
 			axisY:{
-				title:"Kilo Joules",
+				//title:"Kilo Joules : Grammes",
+				valueFormatString: "0.##",
+				labelFontSize:1,
+				//labelFontColor:000,
+				lineThickness:0,
+				gridThickness:0,
+				tickThickness:0,
+				minimum:0,
+				interval:1000
+			},
+			legend:{
+				verticalAlign: "bottom",
+				horizontalAlign: "center",
+				fontSize: 15,
+				fontFamily: "Lucida Sans Unicode"
+
+			},
+			data: [
+			       // energy
+			       {
+			    	   type: "area",
+			    	   color: "rgba(54,158,173,.3)",
+			    	   showInLegend: true,
+			    	   name:"energie/jour (Kj)",
+			    	   dataPoints: averageEnergyPoints,
+			    	   markerType:"none",
+			    	   //markerColor:"red",
+			       },
+			       {
+			    	   type: "column",
+			    	   color: "rgba(54,158,173,1)",
+			    	   showInLegend: true,
+			    	   name:"energie (Kj)",
+			    	   width:50,
+			    	   click: function(e){ 
+			    		   that.showTicketData(e.dataPoint.x);
+			    	   },
+			    	   dataPoints: energyPoints,
+			    	   indexLabelPlacement:"outside",
+			    	   indexLabelAngle:50,
+			    	   //indexLabel: "{y}"
+			       }
+			 ]
+		});
+		var chartNutrition = new CanvasJS.Chart(chartNutritionContainer,{
+			zoomEnabled: true,
+		    panEnabled: true, 
+			title:{
+				text: "Eléments Nutritionnels",
+				padding:0,
+				maring:0,
+				verticalAlign: "top", // "top", "center", "bottom"
+		        horizontalAlign: "center" // "left", "right", "center"
+		        	
+			}, 
+			axisX:{
+			   labelAngle: 50,
+			   valueFormatString: "D MMM",
+			   lineThickness:0,
+			   gridThickness:0,
+			   tickThickness:0,
+			   interval:1,
+			   intervalType:"week"
+			},
+			axisY:{
+				//title:"Kilo Joules : Grammes",
 				valueFormatString: "0.##",
 				labelFontSize:1,
 				lineThickness:0,
 				gridThickness:0,
 				tickThickness:0,
 				minimum:0,
-				interval:10
+				interval:1000
+			},
+			legend:{
+				verticalAlign: "bottom",
+				horizontalAlign: "center",
+				fontSize: 15,
+				fontFamily: "Lucida Sans Unicode"
+
 			},
 			data: [
+			       // fat
 			       {
-			    	   type: "column",
-			    	   color: "rgba(54,158,173,.7)",
-			    	   dataPoints: dataPoints,
+			    	   type: "stackedColumn",
+			    	   color: "rgba(8,15,173,.7)",
+			    	   showInLegend: true,
+			    	   name:"lipides (g)",
+			    	   click: function(e){ 
+			    		   that.showTicketData(e.dataPoint.x);
+			    	   },
+			    	   dataPoints: fatPoints,
 			    	   indexLabelPlacement:"outside",
 			    	   indexLabelAngle:50,
-			    	   indexLabel: "{y}"
+			    	   //indexLabel: "{y}"
 			       },
 			       {
-			    	   type: "splineArea",
-			    	   color: "rgba(8,15,173,.7)",
-			    	   dataPoints: averagePoints,
+			    	   type: "stackedArea",
+			    	   color: "rgba(8,15,173,.3)",
+			    	   //showInLegend: true,
+			    	   name:"lipides/jour (g)",
+			    	   dataPoints: averageFatPoints,
+			    	   markerType:"none"
+			       },
+			       // proteins
+			       {
+			    	   type: "stackedColumn",
+			    	   color: "rgba(54,58,73,.7)",
+			    	   showInLegend: true,
+			    	   name:"protéines (g)",
+			    	   click: function(e){ 
+			    		   that.showTicketData(e.dataPoint.x);
+			    	   },
+			    	   dataPoints: proteinsPoints,
+			    	   indexLabelPlacement:"outside",
+			    	   indexLabelAngle:50,
+			    	   //indexLabel: "{y}"
+			       },
+			       {
+			    	   type: "stackedArea",
+			    	   color: "rgba(54,58,73,.3)",
+			    	   //showInLegend: true,
+			    	   name:"protéines/jour (g)",
+			    	   dataPoints: averageProteinsPoints,
+			    	   markerType:"none"
+			       },
+			       // carbohydrates
+			       {
+			    	   type: "stackedColumn",
+			    	   color: "rgba(54,158,73,.7)",
+			    	   showInLegend: true,
+			    	   name:"glucides (g)",
+			    	   click: function(e){ 
+			    		   that.showTicketData(e.dataPoint.x);
+			    	   },
+			    	   dataPoints: carbohydratesPoints,
+			    	   indexLabelPlacement:"outside",
+			    	   indexLabelAngle:50,
+			    	   //indexLabel: "{y}"
+			       },
+			       {
+			    	   type: "stackedArea",
+			    	   color: "rgba(54,158,73,.3)",
+			    	   //showInLegend: true,
+			    	   name:"glucides/jour (g)",
+			    	   dataPoints: averageCarbohydratesPoints,
 			    	   markerType:"none"
 			       }
 			 ]
 		});
-		this.chart = chart;
-		// empty datapoints.
-    	dataPoints.length = 0;
-    	averagePoints.length = 0;
+		this.chartEnergy = chartEnergy;
+		this.chartNutrition = chartNutrition;
+		// empty energyPoints.
+    	energyPoints.length = 0;
+    	averageEnergyPoints.length = 0;
+    	fatPoints.length = 0;
+    	averageFatPoints.length = 0;
+    	proteinsPoints.length = 0;
+    	averageProteinsPoints.length = 0;
+    	carbohydratesPoints.length = 0;
+    	averageCarbohydratesPoints.length = 0;
 		// build stats.
 		$.getJSON('receiptStats', function(data) {
 			var receiptStats = data;
 			var prevDay;
-			var prevValue;
+			var prevEnergy;
+			var prevFat;
+			var prevProteins;
+			var prevCarbohydrates;
 			$.each(receiptStats, function(key, val) {
 				var date = new Date(val.timestamp);
 				var day = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-				var energy = val.energy;
+				var energy        = val.energy;
+				var fat           = val.fat;
+				var proteins      = val.proteins;
+				var carbohydrates = val.carbohydrates;
 				if(prevDay){
 					days = ((day.getTime()-prevDay.getTime())/(1000*60*60*24));
 					if(days==0) {
-						lastDataPoint = dataPoints.pop();
-						energy = lastDataPoint.y + energy;
+						lastEnergyPoint = energyPoints.pop();
+						energy = lastEnergyPoint.y + energy;
+						
+						lastFatPoint = fatPoints.pop();
+						fat = lastFatPoint.y + fat;
+						
+						lastProteinsPoint = proteinsPoints.pop();
+						proteins = lastProteinsPoint.y + proteins;
+						
+						lastCarbohydratesPoint = carbohydratesPoints.pop();
+						carbohydrates = lastCarbohydratesPoint.y + carbohydrates;
 					}
 					else {
-						meanValue = Math.round(prevValue / days * 100) / 100;
-						for(var theTime = prevDay.getTime(); theTime<day.getTime(); theTime+=(1000*60*60*24)){
-							averagePoints.push({x:new Date(theTime), y:meanValue});
-						}
-						
+						meanEnergy = Math.round(prevEnergy / days * 100) / 100;
+						meanFat = Math.round(prevFat / days * 100) / 100;
+						meanProteins = Math.round(prevProteins / days * 100) / 100;
+						meanCarbohydrates = Math.round(prevCarbohydrates / days * 100) / 100;
+
+						//for(var theTime = prevDay.getTime(); theTime<day.getTime(); theTime+=(1000*60*60*24)){
+							theTime=prevDay.getTime();
+							averageEnergyPoints.push({x:new Date(theTime), y:meanEnergy});
+							averageFatPoints.push({x:new Date(theTime), y:meanFat});
+							averageProteinsPoints.push({x:new Date(theTime), y:meanProteins});
+							averageCarbohydratesPoints.push({x:new Date(theTime), y:meanCarbohydrates});
+							theTime=day.getTime();
+							averageEnergyPoints.push({x:new Date(theTime), y:meanEnergy});
+							averageFatPoints.push({x:new Date(theTime), y:meanFat});
+							averageProteinsPoints.push({x:new Date(theTime), y:meanProteins});
+							averageCarbohydratesPoints.push({x:new Date(theTime), y:meanCarbohydrates});
+						//}
 					}
 				}
-				prevDay   = day;
-				prevValue = energy;
-				console.log(day, energy);
-				dataPoints.push({x:day, y: energy});
+				prevDay           = day;
+				prevEnergy        = energy;
+				prevFat           = fat;
+				prevProteins      = proteins;
+				prevCarbohydrates = carbohydrates;
+				console.log(day, energy, fat, proteins, carbohydrates);
+				energyPoints.push({x:day, y: Math.round(energy*100)/100});
+				fatPoints.push({x:day, y: Math.round(fat*100)/100});
+				proteinsPoints.push({x:day, y: Math.round(proteins*100)/100});
+				carbohydratesPoints.push({x:day, y: Math.round(carbohydrates*100)/100});
 			});
-			console.log("nb points:",dataPoints.length);
+			console.log("nb points:",energyPoints.length);
 			
 			// refresh view.
-			chart.render();
-
+			chartEnergy.render();
+			chartNutrition.render();
 			if(callback)
 				callback();
 		});
-	}
+	},
+    showTicketData : function(timestamp){
+    	var date = new Date(timestamp);
+		var day = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    	dataView = new DataView({
+    		statsView:this,
+    		day:day
+    	});
+        dataView.render();
+        this.$el.find('#dataContainer').html(dataView.$el);
+    }
+
 });
 

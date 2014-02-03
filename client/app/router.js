@@ -7,7 +7,8 @@ var mainView;
 module.exports = Router = Backbone.Router.extend({
 
     routes: {
-        '': 'main',
+        '': 'info',
+        'info': 'info',
         'stats': 'stats',
         'coach': 'coach',
         'control': 'control',
@@ -19,6 +20,12 @@ module.exports = Router = Backbone.Router.extend({
             collection: receipts
         });
         this.mainView.render();
+    },
+    
+    info: function(){
+    	if(!this.mainView)
+    		this.main();
+    	this.mainView.infoView();
     },
     
     stats: function(){

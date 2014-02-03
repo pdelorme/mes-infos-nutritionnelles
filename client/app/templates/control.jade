@@ -17,8 +17,11 @@
         th.col-md-2 référence intermarché<br/>code bare
         th.col-md-1 dernière date d'achat
         th.col-md-2 nom de l'article
-        th.col-md-1.text-center poid <br/>(en grammes)
-        th.col-md-1.text-center calories <br/>(en KJoules)
+        th.col-md-1.text-center poid<br/>(Grammes)
+        th.col-md-1.text-center calories <br/>(KJoules)
+        th.col-md-1.text-center lipides <br/>(Grammes)
+        th.col-md-1.text-center proteines <br/>(Grammes)
+        th.col-md-1.text-center glucides <br/>(Grammes)
       tbody#products-body
       tfoot
         td(colspan="5")
@@ -34,10 +37,27 @@ script#template-row(type="text/html")
             img.image(src!='http://drive.intermarche.com/ressources/images/produit/vignette/0<%= barcode %>.jpg',width="53",height="53")
           td
             | <%= shop_label %><br/><%= barcode %>
-    td(style="vertical-align:middle") <%= last_update %>
+    td(style="vertical-align:middle") <%= new Date(last_update).toLocaleDateString() %>
     td
+      input(name!="changed_<%= barcode %>",type="hidden",value="false")
       input.form-control(name!="name_<%= barcode %>",type="text",placeholder="Nom de l'article",value!="<%= name?name:'' %>")
     td
-      input.form-control(name!="weight_<%= barcode %>",type="text", placeholder="Grammes",value!="<%= weight?weight:'' %>)
+      div.input-group
+        input.form-control(name!="weight_<%= barcode %>",type="text", placeholder="poid",value!="<%= (typeof weight != 'undefined')?weight:'' %>") 
+        span.input-group-addon g
     td
-      input.form-control(name!="energy_<%= barcode %>",type="text", placeholder="Kilo Joules",value!="<%= energy?energy:'' %>)
+      div.input-group
+        input.form-control(name!="energy_<%= barcode %>",type="text", placeholder="energy",value!="<%= (typeof energy != 'undefined')?energy:'' %>")
+        span.input-group-addon Kj
+    td
+      div.input-group
+        input.form-control(name!="fat_<%= barcode %>",type="text", placeholder="lipides",value!="<%= (typeof fat != 'undefined')?fat:'' %>")
+        span.input-group-addon g
+    td
+      div.input-group
+        input.form-control(name!="proteins_<%= barcode %>",type="text", placeholder="protéines",value!="<%= (typeof proteins != 'undefined')?proteins:'' %>")
+        span.input-group-addon g
+    td
+      div.input-group
+        input.form-control(name!="carbohydrates_<%= barcode %>",type="text", placeholder="glucides",value!="<%= (typeof carbohydrates != 'undefined')?carbohydrates:'' %>")
+        span.input-group-addon g
