@@ -39,7 +39,10 @@ module.exports = StatsView = Backbone.View.extend({
 		var chartEnergy = new CanvasJS.Chart(chartEnergyContainer,{
 			zoomEnabled: true,
 		    panEnabled: true, 
-			title:{
+		    toolTip: {
+		        borderColor:"white"//shared: "false"  //disable here. 
+		    },
+		    title:{
 				text: "Energie",
 				fontSize:15,
 				fontFamily:"arial",
@@ -86,14 +89,16 @@ module.exports = StatsView = Backbone.View.extend({
 			    	   color: "rgba(54,158,173,.3)",
 			    	   showInLegend: true,
 			    	   name:"energie/jour (Kj)",
+			    	   toolTipContent: "<span style='\"'color: {color};'\"'>energie/jour</span> : {y} Kj", 
 			    	   dataPoints: averageEnergyPoints,
 			    	   markerType:"none",
 			    	   //markerColor:"red",
 			       },
 			       {
 			    	   type: "column",
-			    	   color: "rgba(54,158,173,1)",
+			    	   color: "rgba(54,158,173,.7)",
 			    	   showInLegend: true,
+			    	   toolTipContent: "<span style='\"'color: {color};'\"'>{x}</span> : {y} Kj", 
 			    	   name:"energie (Kj)",
 			    	   width:50,
 			    	   click: function(e){ 
@@ -112,6 +117,7 @@ module.exports = StatsView = Backbone.View.extend({
 			zoomEnabled: true,
 		    panEnabled: true, 
 		    toolTip: {
+		    	borderColor:"white",
 		        shared: "true"  //disable here. 
 		      },
 			title:{
@@ -161,6 +167,7 @@ module.exports = StatsView = Backbone.View.extend({
 			    	   color: "rgba(8,15,173,.7)",
 			    	   showInLegend: true,
 			    	   name:"lipides (g)",
+			    	   toolTipContent: "<span style='\"'color: {color};'\"'>lipides </span>: {y} g", 
 			    	   click: function(e){ 
 			    		   that.showTicketData(e.dataPoint.x);
 			    	   },
@@ -174,6 +181,7 @@ module.exports = StatsView = Backbone.View.extend({
 			    	   color: "rgba(8,15,173,.3)",
 			    	   //showInLegend: true,
 			    	   name:"lipides/jour (g)",
+			    	   toolTipContent: "<span style='\"'color: {color};'\"'>lipides/jours </span>: {y} g/j", 
 			    	   dataPoints: averageFatPoints,
 			    	   markerType:"none"
 			       },
@@ -183,6 +191,7 @@ module.exports = StatsView = Backbone.View.extend({
 			    	   color: "rgba(54,58,73,.7)",
 			    	   showInLegend: true,
 			    	   name:"protéines (g)",
+			    	   toolTipContent: "<span style='\"'color: {color};'\"'>protéines </span>: {y} g", 
 			    	   click: function(e){ 
 			    		   that.showTicketData(e.dataPoint.x);
 			    	   },
@@ -195,7 +204,8 @@ module.exports = StatsView = Backbone.View.extend({
 			    	   type: "stackedArea",
 			    	   color: "rgba(54,58,73,.3)",
 			    	   //showInLegend: true,
-			    	   name:"protéines/jour (g)",
+			    	   toolTipContent: "", 
+			    	   toolTipContent: "<span style='\"'color: {color};'\"'>protéines/jours </span>: {y} g/j", 
 			    	   dataPoints: averageProteinsPoints,
 			    	   markerType:"none"
 			       },
@@ -205,6 +215,7 @@ module.exports = StatsView = Backbone.View.extend({
 			    	   color: "rgba(54,158,73,.7)",
 			    	   showInLegend: true,
 			    	   name:"glucides (g)",
+			    	   toolTipContent: "<span style='\"'color: {color};'\"'>glucides </span>: {y} g", 
 			    	   click: function(e){ 
 			    		   that.showTicketData(e.dataPoint.x);
 			    	   },
@@ -220,6 +231,7 @@ module.exports = StatsView = Backbone.View.extend({
 			    	   color: "rgba(54,158,73,.3)",
 			    	   //showInLegend: true,
 			    	   name:"glucides/jour (g)",
+			    	   toolTipContent: "<span style='\"'color: {color};'\"'>glucides/jours </span>: {y} g/j", 
 			    	   dataPoints: averageCarbohydratesPoints,
 			    	   markerType:"none"
 			       }

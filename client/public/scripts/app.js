@@ -240,7 +240,9 @@ attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow |
 var buf = [];
 with (locals || {}) {
 var interp;
-buf.push('<div class="col-md-9"><H2> Ecran de controle</H2><p>Ce formulaire vous permet de lister les produits dont les informations nutritionnelles n\'ont pas été saisies dans la base de données openfood facts.<br/>\nles informations saisies ici seront envoyées à OpenFoodFacts pour réutilisation par d\'autre personnes du panel MesInfos et plus généralement par tous les utilisateurs de la base de donnée ouverte Open food Facts.<br/>\nMerci de saisir les données nutritionnelles avec soins.</p></div><div class="col-md-3 text-center"><img src="openfoodfacts-logo-fr.png"/></div><div class="col-md-12"><form role="form" action="postFoodfacts" method="post"><table class="table table-striped table-hover table-condensed"><thead><th colspan="5"><button type="submit" class="btn btn-primary">Envoyer les modifications</button></th></thead><thead><th class="col-md-2">référence intermarché<br/>code bare</th><th class="col-md-1">dernière date d\'achat</th><th class="col-md-2">nom de l\'article</th><th class="col-md-1 text-center">poid<br/>(Grammes)</th><th class="col-md-1 text-center">calories <br/>(KJoules)</th><th class="col-md-1 text-center">lipides <br/>(Grammes)</th><th class="col-md-1 text-center">proteines <br/>(Grammes)</th><th class="col-md-1 text-center">glucides <br/>(Grammes)</th></thead><tbody id="products-body"></tbody><tfoot><td colspan="5"><button type="submit" class="btn btn-primary">Envoyer les modifications</button></td></tfoot></table></form></div><script id="template-row" type="text/html"><tr><td style="vertical-align:middle"> <table><tr><td><img src="http://drive.intermarche.com/ressources/images/produit/vignette/0<%= barcode %>.jpg" width="53" height="53" class="image"/></td><td><%= shop_label %><br/><%= barcode %></td></tr></table></td><td style="vertical-align:middle"><%= new Date(last_update).toLocaleDateString() %></td><td><input name="changed_<%= barcode %>" type="hidden" value="false"/><input name="name_<%= barcode %>" type="text" placeholder="Nom de l\'article" value="<%= name?name:\'\' %>" class="form-control"/></td><td><div class="input-group"><input name="weight_<%= barcode %>" type="text" placeholder="poid" value="<%= (typeof weight != \'undefined\')?weight:\'\' %>" class="form-control"/><span class="input-group-addon">g</span></div></td><td><div class="input-group"><input name="energy_<%= barcode %>" type="text" placeholder="energy" value="<%= (typeof energy != \'undefined\')?energy:\'\' %>" class="form-control"/><span class="input-group-addon">Kj</span></div></td><td><div class="input-group"><input name="fat_<%= barcode %>" type="text" placeholder="lipides" value="<%= (typeof fat != \'undefined\')?fat:\'\' %>" class="form-control"/><span class="input-group-addon">g</span></div></td><td><div class="input-group"><input name="proteins_<%= barcode %>" type="text" placeholder="protéines" value="<%= (typeof proteins != \'undefined\')?proteins:\'\' %>" class="form-control"/><span class="input-group-addon">g</span></div></td><td><div class="input-group"><input name="carbohydrates_<%= barcode %>" type="text" placeholder="glucides" value="<%= (typeof carbohydrates != \'undefined\')?carbohydrates:\'\' %>" class="form-control"/><span class="input-group-addon">g</span></div></td></tr></script>');
+var MesInfoNutritionelles = ("<strong>Mes Infos <span style='font-style:italic'>Nutritionnelles</style></strong>");
+var OpenFoodFacts = ("<strong><span style='color:red'>Ope</span><span style='color:orange'>nFoo</span><span style='color:green'>dFac</span><span style='color:blue'>ts</span></strong>");
+buf.push('<div class="col-md-9"><H2> Ecran de controle</H2><p>Ce formulaire vous permet de lister les produits dont les informations nutritionnelles n\'ont pas été saisies dans la base de données ' + ((interp = OpenFoodFacts) == null ? '' : interp) + '.<br/>\nles informations saisies ici seront envoyées à ' + ((interp = OpenFoodFacts) == null ? '' : interp) + ' pour réutilisation par d\'autre personnes du panel MesInfos et plus généralement par tous les utilisateurs de la base de donnée ouverte ' + ((interp = OpenFoodFacts) == null ? '' : interp) + '.<br/>\nMerci de saisir les données nutritionnelles avec soins.</p></div><div class="col-md-3 text-center"><img src="openfoodfacts-logo-fr.png"/></div><div class="col-md-12"><form role="form" action="postFoodfacts" method="post"><table class="table table-striped table-hover table-condensed"><thead><th colspan="5"><button type="submit" class="btn btn-primary">Envoyer les modifications</button></th></thead><thead><th class="col-md-2">référence intermarché<br/>code bare</th><th class="col-md-1">dernière date d\'achat</th><th class="col-md-2">nom de l\'article</th><th class="col-md-1 text-center">poid<br/>(Grammes)</th><th class="col-md-1 text-center">calories <br/>(KJoules)</th><th class="col-md-1 text-center">lipides <br/>(Grammes)</th><th class="col-md-1 text-center">proteines <br/>(Grammes)</th><th class="col-md-1 text-center">glucides <br/>(Grammes)</th></thead><tbody id="products-body"></tbody><tfoot><td colspan="5"><button type="submit" class="btn btn-primary">Envoyer les modifications</button></td></tfoot></table></form></div><script id="template-row" type="text/html"><tr><td style="vertical-align:middle"> <table><tr><td><img src="http://drive.intermarche.com/ressources/images/produit/vignette/0<%= barcode %>.jpg" width="53" height="53" class="image"/></td><td><%= shop_label %><br/><%= barcode %></td></tr></table></td><td style="vertical-align:middle"><%= new Date(last_update).toLocaleDateString() %></td><td><input name="changed_<%= barcode %>" type="hidden" value="false"/><input name="name_<%= barcode %>" type="text" placeholder="Nom de l\'article" value="<%= name?name:\'\' %>" class="form-control"/></td><td><div class="input-group"><input name="weight_<%= barcode %>" type="text" placeholder="poid" value="<%= (typeof weight != \'undefined\')?weight:\'\' %>" class="form-control"/><span class="input-group-addon">g</span></div></td><td><div class="input-group"><input name="energy_<%= barcode %>" type="text" placeholder="energy" value="<%= (typeof energy != \'undefined\')?energy:\'\' %>" class="form-control"/><span class="input-group-addon">Kj</span></div></td><td><div class="input-group"><input name="fat_<%= barcode %>" type="text" placeholder="lipides" value="<%= (typeof fat != \'undefined\')?fat:\'\' %>" class="form-control"/><span class="input-group-addon">g</span></div></td><td><div class="input-group"><input name="proteins_<%= barcode %>" type="text" placeholder="protéines" value="<%= (typeof proteins != \'undefined\')?proteins:\'\' %>" class="form-control"/><span class="input-group-addon">g</span></div></td><td><div class="input-group"><input name="carbohydrates_<%= barcode %>" type="text" placeholder="glucides" value="<%= (typeof carbohydrates != \'undefined\')?carbohydrates:\'\' %>" class="form-control"/><span class="input-group-addon">g</span></div></td></tr></script>');
 }
 return buf.join("");
 };
@@ -252,7 +254,9 @@ attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow |
 var buf = [];
 with (locals || {}) {
 var interp;
-buf.push('<div><script id="header" type="text/html"><div class="col-md-12"><H2> Détail des achats du jour <%= new Date(day).toLocaleDateString() %></H2><p>Vous pouvez voir et corriger ici les info nutritionnelles associé au ticket de caisse selectionné.<br/>\nles informations saisies ici seront envoyées à OpenFoodFacts pour réutilisation par d\'autre personnes du panel MesInfos et plus généralement par tous les utilisateurs de la base de donnée ouverte Open food Facts.<br/>\nMerci de saisir les données nutritionnelles avec soins.\nLes statisitues seront mise à jour après correction.</p></div><div class="col-md-12"><form role="form" action="postFoodfacts" method="post"><table class="table table-striped table-hover table-condensed"><thead><th colspan="5"><button type="submit" class="btn btn-primary">Envoyer les modifications</button></th></thead><thead><th class="col-md-2">référence intermarché<br/>code bare</th><th class="col-md-2">nom de l\'article</th><th class="col-md-1 text-center">poid<br/>(Grammes)</th><th class="col-md-1 text-center">calories <br/>(KJoules)</th><th class="col-md-1 text-center">lipides <br/>(Grammes)</th><th class="col-md-1 text-center">proteines <br/>(Grammes)</th><th class="col-md-1 text-center">glucides <br/>(Grammes)</th></thead><tbody id="products-body"></tbody><tfoot><td colspan="5"><button type="submit" class="btn btn-primary">Envoyer les modifications</button></td></tfoot></table></form></div></script><script id="template-row" type="text/html"><tr><td style="vertical-align:middle"> <table><tr><td><img src="http://drive.intermarche.com/ressources/images/produit/vignette/0<%= barcode %>.jpg" width="53" height="53" class="image"/></td><td><%= shop_label %><br/><%= barcode %></td></tr></table></td><td><input name="changed_<%= barcode %>" type="hidden" value="false"/><input name="name_<%= barcode %>" type="text" placeholder="Nom de l\'article" value="<%= name?name:\'\' %>" class="form-control"/></td><td><div class="input-group"><input name="weight_<%= barcode %>" type="text" placeholder="poid" value="<%= (typeof weight != \'undefined\')?weight:\'\' %>" class="form-control"/><span class="input-group-addon">g</span></div></td><td><div class="input-group"><input name="energy_<%= barcode %>" type="text" placeholder="energy" value="<%= (typeof energy != \'undefined\')?energy:\'\' %>" class="form-control"/><span class="input-group-addon">Kj</span></div></td><td><div class="input-group"><input name="fat_<%= barcode %>" type="text" placeholder="lipides" value="<%= (typeof fat != \'undefined\')?fat:\'\' %>" class="form-control"/><span class="input-group-addon">g</span></div></td><td><div class="input-group"><input name="proteins_<%= barcode %>" type="text" placeholder="protéines" value="<%= (typeof proteins != \'undefined\')?proteins:\'\' %>" class="form-control"/><span class="input-group-addon">g</span></div></td><td><div class="input-group"><input name="carbohydrates_<%= barcode %>" type="text" placeholder="glucides" value="<%= (typeof carbohydrates != \'undefined\')?carbohydrates:\'\' %>" class="form-control"/><span class="input-group-addon">g</span></div></td></tr></script></div>');
+var MesInfoNutritionelles = ("<strong>Mes Infos <span style='font-style:italic'>Nutritionnelles</style></strong>");
+var OpenFoodFacts = ("<strong><span style='color:red'>Ope</span><span style='color:orange'>nFoo</span><span style='color:green'>dFac</span><span style='color:blue'>ts</span></strong>");
+buf.push('<div><script id="header" type="text/html"><div class="col-md-12"><H2> Détail des achats du jour <%= new Date(day).toLocaleDateString() %></H2><p>Vous pouvez voir et corriger ici les info nutritionnelles associé au ticket de caisse selectionné.<br/>\nles informations saisies ici seront envoyées à ' + ((interp = OpenFoodFacts) == null ? '' : interp) + ' pour réutilisation par d\'autre personnes du panel MesInfos et plus généralement par tous les utilisateurs de la base de donnée ouverte ' + ((interp = OpenFoodFacts) == null ? '' : interp) + '.<br/>\nMerci de saisir les données nutritionnelles avec soins.\nLes statisitues seront mise à jour après correction.</p></div><div class="col-md-12"><form role="form" action="postFoodfacts" method="post"><table class="table table-striped table-hover table-condensed"><thead><th colspan="5"><button type="submit" class="btn btn-primary">Envoyer les modifications</button></th></thead><thead><th class="col-md-2">référence intermarché<br/>code bare</th><th class="col-md-2">nom de l\'article</th><th class="col-md-1 text-center">poid<br/>(Grammes)</th><th class="col-md-1 text-center">calories <br/>(KJoules)</th><th class="col-md-1 text-center">lipides <br/>(Grammes)</th><th class="col-md-1 text-center">proteines <br/>(Grammes)</th><th class="col-md-1 text-center">glucides <br/>(Grammes)</th></thead><tbody id="products-body"></tbody><tfoot><td colspan="5"><button type="submit" class="btn btn-primary">Envoyer les modifications</button></td></tfoot></table></form></div></script><script id="template-row" type="text/html"><tr><td style="vertical-align:middle"> <table><tr><td><img src="http://drive.intermarche.com/ressources/images/produit/vignette/0<%= barcode %>.jpg" width="53" height="53" class="image"/></td><td><%= shop_label %><br/><%= barcode %></td></tr></table></td><td><input name="changed_<%= barcode %>" type="hidden" value="false"/><input name="name_<%= barcode %>" type="text" placeholder="Nom de l\'article" value="<%= name?name:\'\' %>" class="form-control"/></td><td><div class="input-group"><input name="weight_<%= barcode %>" type="text" placeholder="poid" value="<%= (typeof weight != \'undefined\')?weight:\'\' %>" class="form-control"/><span class="input-group-addon">g</span></div></td><td><div class="input-group"><input name="energy_<%= barcode %>" type="text" placeholder="energy" value="<%= (typeof energy != \'undefined\')?energy:\'\' %>" class="form-control"/><span class="input-group-addon">Kj</span></div></td><td><div class="input-group"><input name="fat_<%= barcode %>" type="text" placeholder="lipides" value="<%= (typeof fat != \'undefined\')?fat:\'\' %>" class="form-control"/><span class="input-group-addon">g</span></div></td><td><div class="input-group"><input name="proteins_<%= barcode %>" type="text" placeholder="protéines" value="<%= (typeof proteins != \'undefined\')?proteins:\'\' %>" class="form-control"/><span class="input-group-addon">g</span></div></td><td><div class="input-group"><input name="carbohydrates_<%= barcode %>" type="text" placeholder="glucides" value="<%= (typeof carbohydrates != \'undefined\')?carbohydrates:\'\' %>" class="form-control"/><span class="input-group-addon">g</span></div></td></tr></script></div>');
 }
 return buf.join("");
 };
@@ -264,7 +268,7 @@ attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow |
 var buf = [];
 with (locals || {}) {
 var interp;
-buf.push('<head><script src="Chart.js"> </script></head><nav role="navigation" class="navbar navbar-default navbar-fixed-top"><div class="container"><div class="navbar-header"><button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a href="#info" class="navbar-brand">MesInfos Nutritionelles</a></div><div class="navbar-collapse collapse"><ul class="nav navbar-nav"><li><a href="#stats"> Mes Statistiques</a></li><li><a href="#control"> Vérifications</a></li><li class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle">A Propos<ul class="dropdown-menu"><li> <a href="#">&copy; 2013 Lookal</a></li><li> <a href="mail:pdelorme@lookal.fr">contact: pdelorme@lookal.fr</a></li><li> <a href="#">Merci à la Fing et à OpenFoodFacts pour leur assistance.<br/>\nLongue vie à mes infos</a></li></ul></a></li></ul></div></div></nav><div class="container">                      <br/><br/><br/><div id="tab-content"></div></div>');
+buf.push('<head><script src="Chart.js"> </script></head><nav role="navigation" class="navbar navbar-default navbar-fixed-top"><div class="container"><div class="navbar-header"><button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a href="#info" class="navbar-brand">MesInfos Nutritionelles</a></div><div class="navbar-collapse collapse"><ul class="nav navbar-nav"><li id="statsMenuItem"><a href="#stats"> Mes Statistiques</a></li><li id="controlMenuItem"><a href="#control"> Vérifications</a></li><li class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle">A Propos<ul class="dropdown-menu"><li> <a>&copy; 2013 Lookal</a></li><li> <a href="mail:pdelorme@lookal.fr">contact: pdelorme@lookal.fr</a></li><li> <a>Merci à la Fing et à OpenFoodFacts pour leur assistance.<br/>\nLongue vie à mes infos</a></li></ul></a></li></ul></div></div></nav><div class="container">                      <br/><br/><br/><div id="tab-content"></div></div>');
 }
 return buf.join("");
 };
@@ -276,13 +280,9 @@ attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow |
 var buf = [];
 with (locals || {}) {
 var interp;
-buf.push('<h1>');
-var __val__ = t('main title')
-buf.push(escape(null == __val__ ? "" : __val__));
-buf.push('</h1><p>');
-var __val__ = t('main description')
-buf.push(escape(null == __val__ ? "" : __val__));
-buf.push('</p>');
+var MesInfoNutritionelles = ("<strong>Mes Infos <span style='font-style:italic'>Nutritionnelles</style></strong>");
+var OpenFoodFacts = ("<strong><span style='color:red'>Ope</span><span style='color:orange'>nFoo</span><span style='color:green'>dFac</span><span style='color:blue'>ts</span></strong>");
+buf.push('<div class="col-md-7"><H2>Bienvenue sur MesInfos Nutritionelles</H2><p>' + ((interp = MesInfoNutritionelles) == null ? '' : interp) + ' vous permet de suivre votre nutrionnels en se basant directement sur vos tickets d\'achat Intermarché.<br/>\nElle vous permet de suivre votre consommation en calories, protides, lipides, glucides à la source sans avoir à peser quotidiennement vos alients pour faire un suivi nutritionnel précis.</p></div><div class="col-md-5 text-center"><img src="logo.png"/></div><br/><div class="col-md-3 text-center"><img src="openfoodfacts-logo-fr.png"/></div><div class="col-md-9"><H2>OpenFoodFact</H2><p>' + ((interp = MesInfoNutritionelles) == null ? '' : interp) + ' fonctionne en croisant vos informations d\'achat avec la base de donnée ouverte ' + ((interp = OpenFoodFacts) == null ? '' : interp) + '. <br/>\nCette base de donnée référence les données nutritionnelles de dizaines de milliers d\'articles de consomation courante. <br/>\nCependant elle ne recense pas tous les produits et l\'application ' + ((interp = MesInfoNutritionelles) == null ? '' : interp) + ' vous permet d\'ajouter vos articles le plus simplement du monde à la base de donnée ' + ((interp = OpenFoodFacts) == null ? '' : interp) + ' afin de pouvoir en bénéficier dans vos statistiques de consomation.<br/>\nLes informations nutritionnelles saisies par vous sont immédiatement accessible aux autres utilisateurs de l\'application ' + ((interp = MesInfoNutritionelles) == null ? '' : interp) + ' ainsi qu\'à tous les utilisateurs de la base ' + ((interp = OpenFoodFacts) == null ? '' : interp) + '. </p></div>');
 }
 return buf.join("");
 };
@@ -294,7 +294,7 @@ attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow |
 var buf = [];
 with (locals || {}) {
 var interp;
-buf.push('<div class="col-md-9"><H2> Statistiques d\'achat nutritionnelles</H2><p>Ce diagramme montre les calories, protéines, lipides et glucides par date d\'acaht et éttalé dans le temps.<br/>\nen cliquant sur une date, vous pourez voir la liste des achats du jour et cérifier/compléter les informations nutritionnelles de chaques produits afin de corriger votre diagramme.</p></div><div class="col-md-3 text-center"><img src="openfoodfacts-logo-fr.png"/></div><div id="chartContainer" class="col-md-12 chart"><div id="chartEnergyContainer" class="col-md-6 chart"></div><div id="chartNutritionContainer" class="col-md-6 chart"></div></div><div id="dataContainer"></div>');
+buf.push('<div class="col-md-9"><H2> Statistiques d\'achat nutritionnelles</H2><p>Ce diagramme montre les calories, protéines, lipides et glucides par date d\'achat et éttalé dans le temps.<br/>\nen cliquant sur une date, vous pourez voir la liste des achats du jour et cérifier/compléter les informations nutritionnelles de chaques produits afin de corriger votre diagramme.</p></div><div class="col-md-3 text-center"><img src="openfoodfacts-logo-fr.png"/></div><div id="chartContainer" class="col-md-12 chart"><div id="chartEnergyContainer" class="col-md-6 chart"></div><div id="chartNutritionContainer" class="col-md-6 chart"></div></div><div id="dataContainer"></div>');
 }
 return buf.join("");
 };
@@ -329,6 +329,7 @@ module.exports = AppView = Backbone.View.extend({
     },
 
     infoView: function(event) {
+    	this.activateMenu("#infoMenuItem");
         // render the stats view
         infoView = new InfoView({
             model: this.collection
@@ -338,6 +339,7 @@ module.exports = AppView = Backbone.View.extend({
     },
     
     statsView: function(event) {
+      this.activateMenu("#statsMenuItem");
       // render the stats view
       statsView = new StatsView({
           model: this.collection
@@ -347,6 +349,7 @@ module.exports = AppView = Backbone.View.extend({
     },
     
     coachView:function(event){
+    	this.activateMenu("#coachMenuItem");
 		coachView = new CoachView({
 	        model: this.collection
 	    });
@@ -355,11 +358,19 @@ module.exports = AppView = Backbone.View.extend({
     },
     
     controlView:function(event){
+    	this.activateMenu("#controlMenuItem");
 		controlView = new ControlView({
 	        model: this.collection
 	    });
 	    controlView.render();
 	    this.$el.find('#tab-content').html(controlView.$el);
+    },
+    
+    activateMenu: function(elem){
+    	// disable all menus.
+    	$(".navbar-nav li").removeClass("active");
+    	// activate menu.
+    	$(elem).addClass("active");
     }
 });
 });
@@ -615,7 +626,10 @@ module.exports = StatsView = Backbone.View.extend({
 		var chartEnergy = new CanvasJS.Chart(chartEnergyContainer,{
 			zoomEnabled: true,
 		    panEnabled: true, 
-			title:{
+		    toolTip: {
+		        borderColor:"white"//shared: "false"  //disable here. 
+		    },
+		    title:{
 				text: "Energie",
 				fontSize:15,
 				fontFamily:"arial",
@@ -662,14 +676,16 @@ module.exports = StatsView = Backbone.View.extend({
 			    	   color: "rgba(54,158,173,.3)",
 			    	   showInLegend: true,
 			    	   name:"energie/jour (Kj)",
+			    	   toolTipContent: "<span style='\"'color: {color};'\"'>energie/jour</span> : {y} Kj", 
 			    	   dataPoints: averageEnergyPoints,
 			    	   markerType:"none",
 			    	   //markerColor:"red",
 			       },
 			       {
 			    	   type: "column",
-			    	   color: "rgba(54,158,173,1)",
+			    	   color: "rgba(54,158,173,.7)",
 			    	   showInLegend: true,
+			    	   toolTipContent: "<span style='\"'color: {color};'\"'>{x}</span> : {y} Kj", 
 			    	   name:"energie (Kj)",
 			    	   width:50,
 			    	   click: function(e){ 
@@ -688,6 +704,7 @@ module.exports = StatsView = Backbone.View.extend({
 			zoomEnabled: true,
 		    panEnabled: true, 
 		    toolTip: {
+		    	borderColor:"white",
 		        shared: "true"  //disable here. 
 		      },
 			title:{
@@ -737,6 +754,7 @@ module.exports = StatsView = Backbone.View.extend({
 			    	   color: "rgba(8,15,173,.7)",
 			    	   showInLegend: true,
 			    	   name:"lipides (g)",
+			    	   toolTipContent: "<span style='\"'color: {color};'\"'>lipides </span>: {y} g", 
 			    	   click: function(e){ 
 			    		   that.showTicketData(e.dataPoint.x);
 			    	   },
@@ -750,6 +768,7 @@ module.exports = StatsView = Backbone.View.extend({
 			    	   color: "rgba(8,15,173,.3)",
 			    	   //showInLegend: true,
 			    	   name:"lipides/jour (g)",
+			    	   toolTipContent: "<span style='\"'color: {color};'\"'>lipides/jours </span>: {y} g/j", 
 			    	   dataPoints: averageFatPoints,
 			    	   markerType:"none"
 			       },
@@ -759,6 +778,7 @@ module.exports = StatsView = Backbone.View.extend({
 			    	   color: "rgba(54,58,73,.7)",
 			    	   showInLegend: true,
 			    	   name:"protéines (g)",
+			    	   toolTipContent: "<span style='\"'color: {color};'\"'>protéines </span>: {y} g", 
 			    	   click: function(e){ 
 			    		   that.showTicketData(e.dataPoint.x);
 			    	   },
@@ -771,7 +791,8 @@ module.exports = StatsView = Backbone.View.extend({
 			    	   type: "stackedArea",
 			    	   color: "rgba(54,58,73,.3)",
 			    	   //showInLegend: true,
-			    	   name:"protéines/jour (g)",
+			    	   toolTipContent: "", 
+			    	   toolTipContent: "<span style='\"'color: {color};'\"'>protéines/jours </span>: {y} g/j", 
 			    	   dataPoints: averageProteinsPoints,
 			    	   markerType:"none"
 			       },
@@ -781,6 +802,7 @@ module.exports = StatsView = Backbone.View.extend({
 			    	   color: "rgba(54,158,73,.7)",
 			    	   showInLegend: true,
 			    	   name:"glucides (g)",
+			    	   toolTipContent: "<span style='\"'color: {color};'\"'>glucides </span>: {y} g", 
 			    	   click: function(e){ 
 			    		   that.showTicketData(e.dataPoint.x);
 			    	   },
@@ -796,6 +818,7 @@ module.exports = StatsView = Backbone.View.extend({
 			    	   color: "rgba(54,158,73,.3)",
 			    	   //showInLegend: true,
 			    	   name:"glucides/jour (g)",
+			    	   toolTipContent: "<span style='\"'color: {color};'\"'>glucides/jours </span>: {y} g/j", 
 			    	   dataPoints: averageCarbohydratesPoints,
 			    	   markerType:"none"
 			       }

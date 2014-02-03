@@ -26,6 +26,7 @@ module.exports = AppView = Backbone.View.extend({
     },
 
     infoView: function(event) {
+    	this.activateMenu("#infoMenuItem");
         // render the stats view
         infoView = new InfoView({
             model: this.collection
@@ -35,6 +36,7 @@ module.exports = AppView = Backbone.View.extend({
     },
     
     statsView: function(event) {
+      this.activateMenu("#statsMenuItem");
       // render the stats view
       statsView = new StatsView({
           model: this.collection
@@ -44,6 +46,7 @@ module.exports = AppView = Backbone.View.extend({
     },
     
     coachView:function(event){
+    	this.activateMenu("#coachMenuItem");
 		coachView = new CoachView({
 	        model: this.collection
 	    });
@@ -52,10 +55,18 @@ module.exports = AppView = Backbone.View.extend({
     },
     
     controlView:function(event){
+    	this.activateMenu("#controlMenuItem");
 		controlView = new ControlView({
 	        model: this.collection
 	    });
 	    controlView.render();
 	    this.$el.find('#tab-content').html(controlView.$el);
+    },
+    
+    activateMenu: function(elem){
+    	// disable all menus.
+    	$(".navbar-nav li").removeClass("active");
+    	// activate menu.
+    	$(elem).addClass("active");
     }
 });
