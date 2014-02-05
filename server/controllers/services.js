@@ -6,6 +6,7 @@ var Batch = require('batch');
 var FoodFact = require('../models/foodfact');
 var ReceiptStat = require('../models/receiptstat');
 var openFoodFactsClient = JsonRequest.newClient('http://fr.openfoodfacts.org/');
+var fs = require('fs');
 var debug=false;
 
 module.exports.cleanDatabase = function(req, res) {
@@ -103,8 +104,8 @@ module.exports.testUpdate = function(req, res){
 
 module.exports.test = function(req, res){
 	var product = {
-			barcode : '3073780969000',
-			name : 'KIRI GOUTER 280G 8 PORTIONS - TEST',
+			barcode : '03073780969000',
+			name : 'KIRI GOUTER 280G 8 PORTIONS - TEST IMAGE',
 			energy: 500,
 			energy_unit: "kJ",
 			fat: 731,
@@ -118,6 +119,9 @@ module.exports.test = function(req, res){
 	postOpenFoodFact(product, function(offResp){
 		res.send(offResp);
 	});
+//	postOpenFoodFactImage(product.barcode,function(err){
+//		res.send("OK:"+err);
+//	});
 };
 /**
  * deletes all data related to the application.
@@ -618,23 +622,66 @@ function postOpenFoodFact(foodfact, done){
 	};
 	console.log("ajout à OenFoodFact",data);
 	Request.post('http://fr.openfoodfacts.org/cgi/product_jqm2.pl', 
-	//Request.post('http://localhost:8888/test', 
 		{form:data},
 		function (error, response, body) {
-//	        if (!error && response.statusCode == 200) {
-//	        	console.log(body);
-//	            done(response);
-//	        }
 	        if(debug)
 	        	console.log(body);
 	        var resp = JSON.parse(body);
-	        if(done){
-		        if(resp.status==0)
-		        	return done(resp.status_verbose);
-		        done();
+	        if(!error && resp.status==1){
+	        	postOpenFoodFactImage(foodfact.barcode, done);
+	        } else {
+	        	if(done) done();
 	        }
 	    }
 	);
+}
+
+/**
+ * envoi l'image intermarché à OpenFoodFact si nécéssaire.
+ * http://drive.intermarche.com/ressources/images/produit/zoom/03178050000749.jpg
+ * @param barcode
+ */
+function postOpenFoodFactImage(barcode, done){
+	if(!barcode)
+		return;
+	// 1/ vérifie que le produit existe et n'a pas déja d'image dans off
+	openFoodFactsClient.get("api/v0/produit/"+ barcode +".json", function(err, res, body){
+		if(err){
+			if (done) done(err);
+			return;
+		}
+		if(body.status==0){
+			if (done) done("produit inconnu");
+			return;
+		}
+		if(body.product.image_url){
+			if (done) done("déja une image");
+			return;
+		}
+		fixedcode = String('00000000000000'+barcode).slice(-14);
+		// 2/ charge l'image pour ce code bare.
+		Request('http://drive.intermarche.com/ressources/images/produit/zoom/'+fixedcode+'.jpg',
+			function (error, response, body) {
+			  if (!error && response.statusCode == 200) {
+				// 3/ envoi de l'image.
+				var form = new FormData();
+				form.append('code', barcode);
+				form.append('imagefield', "front");
+				form.append('imgupload_front', fs.createReadStream('temp/zoom_'+barcode+'.jpg'));
+				form.submit('http://fr.openfoodfacts.org/cgi/product_image_upload.pl', 
+					function(err, res) {
+					  // res – response object (http.IncomingMessage)  //
+					  //res.resume(); // for node-0.10.x
+					  if(done) done(err);
+					}
+				);
+			  } else {
+				  if(done) done("pas d'image");
+			  }
+			  return;
+			}
+		).pipe(fs.createWriteStream('temp/zoom_'+barcode+'.jpg'));
+	});
 }
 
 function dayFacts(day, done){
