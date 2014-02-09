@@ -5,6 +5,7 @@ var QueryString = require('query-string');
 var Batch = require('batch');
 var FoodFact = require('../models/foodfact');
 var ReceiptStat = require('../models/receiptstat');
+var Constants = require('./constants');
 var openFoodFactsClient = JsonRequest.newClient('http://fr.openfoodfacts.org/');
 var fs = require('fs');
 var debug=false;
@@ -212,6 +213,8 @@ function updateAllFoodfacts(timefloor, done){
 	    
 	    for (idx in products) {
 	        product = products[idx];
+	        if(!isFood(product))
+	        	continue;
 	        (function(product){
 		        batch.push(function(done){
 			        updateFoodfact(product, timefloor, done);		        
@@ -241,6 +244,8 @@ function generateDummyData(done){
 		    batch.concurrency(1); // la concurency pourra etre augmenté quand la vue product sera fonctionnelle.
 			for (idx in products) {
 		        product = products[idx];
+		        if(!isFood(product))
+		        	continue;
 		        (function(product){
 			        batch.push(function(done){
 			        	FoodFact.byBarcode(product.barcode,function(err,foodfact) {
@@ -698,6 +703,8 @@ function dayFacts(day, done){
 		var foodfacts=new Array();
 		for (idx in products) {
 			product = products[idx];
+			if(!isFood(product))
+				continue;
 			barcode = product.barcode;
 			if(allBarcodes[barcode]){
 				allBarcodes[barcode]++;
@@ -725,4 +732,13 @@ function yesterday(){
 	var yesterday = new Date();
 	yesterday.setDate(yesterday.getDate() - 1);
 	return yesterday;
+}
+
+/**
+ * retourne vrai si le produit est alimentaire.
+ * @param product
+ * @returns
+ */
+function isFood(product){
+	return Constants["foodSections"][product.section];
 }
