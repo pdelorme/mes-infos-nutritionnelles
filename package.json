@@ -1,7 +1,7 @@
 {
   "name": "mes-infos-nutritionnelles",
   "version": "0.0.3",
-  "description": "Appli Mes-Info de suivi nutritionel, basé sur les ticket de caisse.",
+  "description": "Appli Mes-Info de suivi nutritionnel, basé sur les tickets de caisse.",
   "repository": {
     "type": "git",
     "url": "https://github.com/pdelorme/mes-infos-nutritionnelles.git"
@@ -24,7 +24,7 @@
   "scripts": {
     "start": "node server.js"
   },
-  "cozy-displayName": "Mes Infos Nutitionnelles",
+  "cozy-displayName": "Mes Infos Nutritionnelles",
   "cozy-permissions": {
     "Receipt": {
         "description": "Visualiser la liste de vos tickets de caisse."
