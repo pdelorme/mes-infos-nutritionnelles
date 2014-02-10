@@ -13,25 +13,19 @@ module.exports = AppView = Backbone.View.extend({
 
     // initialize is automatically called once after the view is constructed
     initialize: function() {
-        // this.listenTo(this.collection, "add", this.onBookmarkAdded);
     },
 
     render: function() {
-
         // we render the template
         this.$el.html(this.template());
 
-        // fetch the receipts from the database
-        this.collection.fetch();
     },
 
     infoView: function(event) {
     	$("#loader").show();
     	this.activateMenu("#infoMenuItem");
         // render the stats view
-        infoView = new InfoView({
-            model: this.collection
-        });
+        infoView = new InfoView();
         infoView.render();
         this.$el.find('#tab-content').html(infoView.$el);
         $("#loader").hide();
@@ -41,9 +35,7 @@ module.exports = AppView = Backbone.View.extend({
     	$("#loader").show();
     	this.activateMenu("#statsMenuItem");
     	// render the stats view
-    	statsView = new StatsView({
-    		model: this.collection
-    	});
+    	statsView = new StatsView();
     	statsView.render();
     	this.$el.find('#tab-content').html(statsView.$el);
     	$("#loader").hide();
@@ -52,9 +44,7 @@ module.exports = AppView = Backbone.View.extend({
     coachView:function(event){
     	$("#loader").show();
     	this.activateMenu("#coachMenuItem");
-		coachView = new CoachView({
-	        model: this.collection
-	    });
+		coachView = new CoachView();
 	    coachView.render();
 	    this.$el.find('#tab-content').html(coachView.$el);
         $("#loader").hide();
@@ -63,9 +53,7 @@ module.exports = AppView = Backbone.View.extend({
     controlView:function(event){
     	$("#loader").show();
     	this.activateMenu("#controlMenuItem");
-		controlView = new ControlView({
-	        model: this.collection
-	    });
+		controlView = new ControlView();
 	    controlView.render();
 	    this.$el.find('#tab-content').html(controlView.$el);
         $("#loader").hide();

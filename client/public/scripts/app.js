@@ -268,7 +268,7 @@ attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow |
 var buf = [];
 with (locals || {}) {
 var interp;
-buf.push('<head><script src="Chart.js"> </script></head><div id="loader"><img src="loader.gif" alt="je charge"/></div><nav role="navigation" class="navbar navbar-default navbar-fixed-top"><div class="container"><div class="navbar-header"><button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a href="#info" class="navbar-brand">MesInfos Nutritionelles</a></div><div class="navbar-collapse collapse"><ul class="nav navbar-nav"><li id="statsMenuItem"><a href="#stats"> Mes Statistiques</a></li><li id="controlMenuItem"><a href="#control"> Vérifications</a></li><li class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle">A Propos<ul class="dropdown-menu"><li> <a>&copy; 2013 Lookal</a></li><li> <a href="mail:pdelorme@lookal.fr">contact: pdelorme@lookal.fr</a></li><li> <a>Merci à la Fing et à OpenFoodFacts pour leur assistance.<br/>\nLongue vie à mes infos</a></li></ul></a></li></ul></div></div></nav><div class="container">                      <br/><br/><br/><div id="tab-content"></div></div>');
+buf.push('<div id="loader"><img src="loader.gif" alt="je charge"/></div><nav role="navigation" class="navbar navbar-default navbar-fixed-top"><div class="container"><div class="navbar-header"><button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a href="#info" class="navbar-brand">MesInfos Nutritionelles</a></div><div class="navbar-collapse collapse"><ul class="nav navbar-nav"><li id="statsMenuItem"><a href="#stats"> Mes Statistiques</a></li><li id="controlMenuItem"><a href="#control"> Vérifications</a></li><li class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle">A Propos<ul class="dropdown-menu"><li> <a>&copy; 2013 Lookal</a></li><li> <a href="mail:pdelorme@lookal.fr">contact: pdelorme@lookal.fr</a></li><li> <a>Merci à la Fing et à OpenFoodFacts pour leur assistance.<br/>\nLongue vie à mes infos</a></li></ul></a></li></ul></div></div></nav><div class="container">                      <br/><br/><br/><div id="tab-content"></div></div>');
 }
 return buf.join("");
 };
@@ -318,25 +318,19 @@ module.exports = AppView = Backbone.View.extend({
 
     // initialize is automatically called once after the view is constructed
     initialize: function() {
-        // this.listenTo(this.collection, "add", this.onBookmarkAdded);
     },
 
     render: function() {
-
         // we render the template
         this.$el.html(this.template());
 
-        // fetch the receipts from the database
-        this.collection.fetch();
     },
 
     infoView: function(event) {
     	$("#loader").show();
     	this.activateMenu("#infoMenuItem");
         // render the stats view
-        infoView = new InfoView({
-            model: this.collection
-        });
+        infoView = new InfoView();
         infoView.render();
         this.$el.find('#tab-content').html(infoView.$el);
         $("#loader").hide();
@@ -346,9 +340,7 @@ module.exports = AppView = Backbone.View.extend({
     	$("#loader").show();
     	this.activateMenu("#statsMenuItem");
     	// render the stats view
-    	statsView = new StatsView({
-    		model: this.collection
-    	});
+    	statsView = new StatsView();
     	statsView.render();
     	this.$el.find('#tab-content').html(statsView.$el);
     	$("#loader").hide();
@@ -357,9 +349,7 @@ module.exports = AppView = Backbone.View.extend({
     coachView:function(event){
     	$("#loader").show();
     	this.activateMenu("#coachMenuItem");
-		coachView = new CoachView({
-	        model: this.collection
-	    });
+		coachView = new CoachView();
 	    coachView.render();
 	    this.$el.find('#tab-content').html(coachView.$el);
         $("#loader").hide();
@@ -368,9 +358,7 @@ module.exports = AppView = Backbone.View.extend({
     controlView:function(event){
     	$("#loader").show();
     	this.activateMenu("#controlMenuItem");
-		controlView = new ControlView({
-	        model: this.collection
-	    });
+		controlView = new ControlView();
 	    controlView.render();
 	    this.$el.find('#tab-content').html(controlView.$el);
         $("#loader").hide();
@@ -427,13 +415,9 @@ module.exports = ControlView = Backbone.View.extend({
     events: {
     	"submit form":"postData",
     	"change input.form-control" : "formChange"
-        //"click .receipt": "toggleSections",    
-        //"click .toggle": "toggleSectionsNoDefault"    
     },
 
     initialize: function() {
-        // this.collection = new ReceiptCollection([], { receiptId: this.model.attributes.receiptId });
-        
     },
 
     render: function() {
@@ -480,13 +464,6 @@ module.exports = ControlView = Backbone.View.extend({
 	        	that.getData();
 	    	},
 		});
-    	
-//    	$.postJSON('postFoodfacts', formData, function(data) {
-//        	productBody.html("");
-//    		$.each(data, function(key, val) {
-//    			productBody.append(productRowTemplate(val));
-//    		});
-//    	});
     },
     formChange: function(e){
     	var id = e.target.name.split('_')[1];
@@ -586,19 +563,13 @@ module.exports = InfoView = Backbone.View.extend({
     tagName: 'div',
     template: require('../templates/info'),
     events: {
-        //"click .receipt": "toggleSections",    
-        //"click .toggle": "toggleSectionsNoDefault"    
     },
 
     initialize: function() {
-        // this.collection = new ReceiptCollection([], { receiptId: this.model.attributes.receiptId });
-        
     },
 
     render: function() {
-        this.$el.html(this.template({
-            receipt: this.model.toJSON()
-        }));
+        this.$el.html(this.template());
     },
     
 });
@@ -607,7 +578,6 @@ module.exports = InfoView = Backbone.View.extend({
 });
 
 ;require.register("views/stats_view", function(exports, require, module) {
-//var SectionView = require('./section');
 var ReceiptCollection = require('../collections/receipts');
 
 module.exports = StatsView = Backbone.View.extend({
@@ -615,17 +585,13 @@ module.exports = StatsView = Backbone.View.extend({
     tagName: 'div',
     template: require('../templates/stats'),
     events: {
-        //"click .receipt": "toggleSections",    
-        //"click .toggle": "toggleSectionsNoDefault"    
     },
 
     initialize: function() {
     },
 
     render: function() {
-        this.$el.html(this.template({
-            receipt: this.model.toJSON()
-        }));
+        this.$el.html(this.template());
         var that = this;
         // async to allow proper refresh.
         setTimeout(function(){

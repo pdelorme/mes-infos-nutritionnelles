@@ -8,13 +8,9 @@ module.exports = ControlView = Backbone.View.extend({
     events: {
     	"submit form":"postData",
     	"change input.form-control" : "formChange"
-        //"click .receipt": "toggleSections",    
-        //"click .toggle": "toggleSectionsNoDefault"    
     },
 
     initialize: function() {
-        // this.collection = new ReceiptCollection([], { receiptId: this.model.attributes.receiptId });
-        
     },
 
     render: function() {
@@ -61,13 +57,6 @@ module.exports = ControlView = Backbone.View.extend({
 	        	that.getData();
 	    	},
 		});
-    	
-//    	$.postJSON('postFoodfacts', formData, function(data) {
-//        	productBody.html("");
-//    		$.each(data, function(key, val) {
-//    			productBody.append(productRowTemplate(val));
-//    		});
-//    	});
     },
     formChange: function(e){
     	var id = e.target.name.split('_')[1];

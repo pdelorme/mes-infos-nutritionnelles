@@ -1,4 +1,3 @@
-//var SectionView = require('./section');
 var ReceiptCollection = require('../collections/receipts');
 
 module.exports = StatsView = Backbone.View.extend({
@@ -6,17 +5,13 @@ module.exports = StatsView = Backbone.View.extend({
     tagName: 'div',
     template: require('../templates/stats'),
     events: {
-        //"click .receipt": "toggleSections",    
-        //"click .toggle": "toggleSectionsNoDefault"    
     },
 
     initialize: function() {
     },
 
     render: function() {
-        this.$el.html(this.template({
-            receipt: this.model.toJSON()
-        }));
+        this.$el.html(this.template());
         var that = this;
         // async to allow proper refresh.
         setTimeout(function(){
