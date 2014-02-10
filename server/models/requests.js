@@ -51,7 +51,7 @@ module.exports = {
         },
         productsByDay: function(doc) {
     		var date = new Date(doc.timestamp);
-    		var day = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    		var day = ""+date.getFullYear()+"-"+date.getMonth()+"-"+date.getDate();
     		emit(day, doc);
         }
 //      	,

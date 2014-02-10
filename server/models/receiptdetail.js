@@ -49,9 +49,10 @@ ReceiptDetail.products = function(callback) {
 };
 
 ReceiptDetail.productsByDay = function(day, callback) {
-    ReceiptDetail.request(
+	var dayString = ""+day.getFullYear()+"-"+day.getMonth()+"-"+day.getDate();
+	ReceiptDetail.request(
         "productsByDay", 
-        {key:day},
+        {key:dayString},
         function(err, instances) {
             callback(null, instances);
         }

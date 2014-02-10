@@ -1,6 +1,6 @@
 {
   "name": "mes-infos-nutritionnelles",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Appli Mes-Info de suivi nutritionnel, basé sur les tickets de caisse.",
   "repository": {
     "type": "git",
@@ -27,10 +27,10 @@
   "cozy-displayName": "Mes Infos Nutritionnelles",
   "cozy-permissions": {
     "Receipt": {
-        "description": "Visualiser la liste de vos tickets de caisse."
+        "description": "Vos tickets de caisse."
     },
     "ReceiptDetail": {
-        "description": "Visualiser les lignes de vos tickets de caisse."
+        "description": "Lignes de vos tickets de caisse."
     },
     "receiptstat":{
     	"description": "Statistiques nutritionnelles des tickets de caisses"
