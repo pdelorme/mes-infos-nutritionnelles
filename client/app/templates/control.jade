@@ -17,14 +17,14 @@ OpenFoodFacts = "<strong><span style='color:red'>Ope</span><span style='color:or
         th(colspan="5")
           button.btn.btn-primary(type="submit") Envoyer les modifications
       thead
-        th.col-md-2 référence intermarché<br/>code bare
-        th.col-md-1 dernière date d'achat
-        th.col-md-2 nom de l'article
+        th code barre
+        th.col-md-4 nom de l'article
         th.col-md-1.text-center poid<br/>(Grammes)
         th.col-md-1.text-center calories <br/>(KJoules)
         th.col-md-1.text-center lipides <br/>(Grammes)
         th.col-md-1.text-center proteines <br/>(Grammes)
         th.col-md-1.text-center glucides <br/>(Grammes)
+        th.col-md-1 dernière date d'achat
       tbody#products-body
       tfoot
         td(colspan="5")
@@ -34,20 +34,14 @@ OpenFoodFacts = "<strong><span style='color:red'>Ope</span><span style='color:or
 script#template-row(type="text/html")
   tr
     td(style="vertical-align:middle") 
-      table
-        tr
-          td
-            img.image(src!='http://drive.intermarche.com/ressources/images/produit/vignette/0<%= barcode %>.jpg',width="53",height="53")
-          td
-            | <%= shop_label %><br/><%= barcode %>
-    td(style="vertical-align:middle") <%= new Date(last_update).toLocaleDateString() %>
-    td
+      img.image(src!='http://drive.intermarche.com/ressources/images/produit/vignette/0<%= barcode %>.jpg',width="53",height="53",title!='code barre : <%= barcode %>&#10;Libellé Intermarché : <%= shop_label %>', alt!='<%= shop_label %>')
+    td(width="100%")
       input(name!="changed_<%= barcode %>",type="hidden",value="false")
-      input.form-control(name!="name_<%= barcode %>",type="text",placeholder="Nom de l'article",value!="<%= name?name:'' %>")
+      input.form-control(name!="name_<%= barcode %>",type="text",placeholder="Nom de l'article",value!="<%= name?name:'' %>",width="100%")
     td
       div.input-group
         input.form-control(name!="weight_<%= barcode %>",type="text", placeholder="poid",value!="<%= (typeof weight != 'undefined')?weight:'' %>") 
-        span.input-group-addon g
+        span.input-group-addon <%= weightUnit %>
     td
       div.input-group
         input.form-control(name!="energy_<%= barcode %>",type="text", placeholder="energy",value!="<%= (typeof energy != 'undefined')?energy:'' %>")
@@ -64,3 +58,5 @@ script#template-row(type="text/html")
       div.input-group
         input.form-control(name!="carbohydrates_<%= barcode %>",type="text", placeholder="glucides",value!="<%= (typeof carbohydrates != 'undefined')?carbohydrates:'' %>")
         span.input-group-addon g
+    td(style="vertical-align:middle") <%= new Date(last_update).toLocaleDateString() %>
+    

@@ -18,8 +18,8 @@ div
             th(colspan="5")
               button.btn.btn-primary(type="submit") Envoyer les modifications
           thead
-            th.col-md-2 référence intermarché<br/>code bare
-            th.col-md-2 nom de l'article
+            th code bare
+            th.col-md-1 nom de l'article
             th.col-md-1.text-center poid<br/>(Grammes)
             th.col-md-1.text-center calories <br/>(KJoules)
             th.col-md-1.text-center lipides <br/>(Grammes)
@@ -34,13 +34,8 @@ div
   script#template-row(type="text/html")
     tr
       td(style="vertical-align:middle") 
-        table
-          tr
-            td
-              img.image(src!='http://drive.intermarche.com/ressources/images/produit/vignette/0<%= barcode %>.jpg',width="53",height="53")
-            td
-              | <%= shop_label %><br/><%= barcode %>
-      td
+        img.image(src!='http://drive.intermarche.com/ressources/images/produit/vignette/0<%= barcode %>.jpg',width="53",height="53",title!='code barre : <%= barcode %>&#10;Libellé Intermarché : <%= shop_label %>', alt!='<%= shop_label %>')
+      td(width="100%")
         input(name!="changed_<%= barcode %>",type="hidden",value="false")
         input.form-control(name!="name_<%= barcode %>",type="text",placeholder="Nom de l'article",value!="<%= name?name:'' %>")
       td
