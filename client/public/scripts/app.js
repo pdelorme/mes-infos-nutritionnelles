@@ -268,7 +268,7 @@ attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow |
 var buf = [];
 with (locals || {}) {
 var interp;
-buf.push('<head><script src="Chart.js"> </script></head><nav role="navigation" class="navbar navbar-default navbar-fixed-top"><div class="container"><div class="navbar-header"><button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a href="#info" class="navbar-brand">MesInfos Nutritionelles</a></div><div class="navbar-collapse collapse"><ul class="nav navbar-nav"><li id="statsMenuItem"><a href="#stats"> Mes Statistiques</a></li><li id="controlMenuItem"><a href="#control"> Vérifications</a></li><li class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle">A Propos<ul class="dropdown-menu"><li> <a>&copy; 2013 Lookal</a></li><li> <a href="mail:pdelorme@lookal.fr">contact: pdelorme@lookal.fr</a></li><li> <a>Merci à la Fing et à OpenFoodFacts pour leur assistance.<br/>\nLongue vie à mes infos</a></li></ul></a></li></ul></div></div></nav><div class="container">                      <br/><br/><br/><div id="tab-content"></div></div>');
+buf.push('<head><script src="Chart.js"> </script></head><div id="loader"><img src="loader.gif" alt="je charge"/></div><nav role="navigation" class="navbar navbar-default navbar-fixed-top"><div class="container"><div class="navbar-header"><button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a href="#info" class="navbar-brand">MesInfos Nutritionelles</a></div><div class="navbar-collapse collapse"><ul class="nav navbar-nav"><li id="statsMenuItem"><a href="#stats"> Mes Statistiques</a></li><li id="controlMenuItem"><a href="#control"> Vérifications</a></li><li class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle">A Propos<ul class="dropdown-menu"><li> <a>&copy; 2013 Lookal</a></li><li> <a href="mail:pdelorme@lookal.fr">contact: pdelorme@lookal.fr</a></li><li> <a>Merci à la Fing et à OpenFoodFacts pour leur assistance.<br/>\nLongue vie à mes infos</a></li></ul></a></li></ul></div></div></nav><div class="container">                      <br/><br/><br/><div id="tab-content"></div></div>');
 }
 return buf.join("");
 };
@@ -329,6 +329,7 @@ module.exports = AppView = Backbone.View.extend({
     },
 
     infoView: function(event) {
+    	$("#loader").show();
     	this.activateMenu("#infoMenuItem");
         // render the stats view
         infoView = new InfoView({
@@ -336,41 +337,50 @@ module.exports = AppView = Backbone.View.extend({
         });
         infoView.render();
         this.$el.find('#tab-content').html(infoView.$el);
+        $("#loader").hide();
     },
     
     statsView: function(event) {
-      this.activateMenu("#statsMenuItem");
-      // render the stats view
-      statsView = new StatsView({
-          model: this.collection
-      });
-      statsView.render();
-      this.$el.find('#tab-content').html(statsView.$el);
+    	$("#loader").show();
+    	this.activateMenu("#statsMenuItem");
+    	// render the stats view
+    	statsView = new StatsView({
+    		model: this.collection
+    	});
+    	statsView.render();
+    	this.$el.find('#tab-content').html(statsView.$el);
+    	$("#loader").hide();
     },
     
     coachView:function(event){
+    	$("#loader").show();
     	this.activateMenu("#coachMenuItem");
 		coachView = new CoachView({
 	        model: this.collection
 	    });
 	    coachView.render();
 	    this.$el.find('#tab-content').html(coachView.$el);
+        $("#loader").hide();
     },
     
     controlView:function(event){
+    	$("#loader").show();
     	this.activateMenu("#controlMenuItem");
 		controlView = new ControlView({
 	        model: this.collection
 	    });
 	    controlView.render();
 	    this.$el.find('#tab-content').html(controlView.$el);
+        $("#loader").hide();
     },
     
     activateMenu: function(elem){
+    	$("#loader").show();
     	// disable all menus.
     	$(".navbar-nav li").removeClass("active");
     	// activate menu.
     	$(elem).addClass("active");
+    	$("#loader").hide();
     }
 });
 });
@@ -426,10 +436,15 @@ module.exports = ControlView = Backbone.View.extend({
 
     render: function() {
         this.$el.html(this.template());
-        this.getData();
+        var that = this;
+        // async to allow proper refresh.
+        setTimeout(function(){
+        	that.getData();
+        },0);        
     },
     
     getData: function(){
+    	$("#loader").show();
     	// asks server for product without infos.
     	var that = this;
     	var productBody = this.$el.find("#products-body");
@@ -440,10 +455,12 @@ module.exports = ControlView = Backbone.View.extend({
     		$.each(data, function(key, val) {
     			productBody.append(productRowTemplate(val));
     		});
+        	$("#loader").hide();
     	});
     },
     
     postData: function(e){
+    	$("#loader").show();
     	e.preventDefault();
     	var formData = $("form").serialize();
     	var productBody = this.$el.find("#products-body");
@@ -508,6 +525,7 @@ module.exports = DataView = Backbone.View.extend({
     },
     
     getData: function(){
+    	$("#show").hide();
     	// asks server for product without infos.
     	var that = this;
     	var productBody = this.$el.find("#products-body");
@@ -517,10 +535,12 @@ module.exports = DataView = Backbone.View.extend({
     		$.each(data, function(key, val) {
     			productBody.append(productRowTemplate(val));
     		});
+        	$("#loader").hide();
     	});
     },
     
     postData: function(e){
+    	$("#loader").show();
     	e.preventDefault();
     	var formData = $("form").serialize();
     	var that = this;
@@ -612,6 +632,8 @@ module.exports = StatsView = Backbone.View.extend({
     },
     
     updateChart: function (callback) {
+    	$("#loader").show();
+
     	var energyPoints = [];
     	var fatPoints = [];
     	var proteinsPoints = [];
@@ -901,11 +923,13 @@ module.exports = StatsView = Backbone.View.extend({
 			// refresh view.
 			chartEnergy.render();
 			chartNutrition.render();
+	    	$("#loader").hide();
 			if(callback)
 				callback();
 		});
 	},
     showTicketData : function(timestamp){
+    	$("#loader").show();
     	var date = new Date(timestamp);
 		var day = new Date(date.getFullYear(), date.getMonth(), date.getDate());
     	dataView = new DataView({

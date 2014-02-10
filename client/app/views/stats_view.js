@@ -25,6 +25,8 @@ module.exports = StatsView = Backbone.View.extend({
     },
     
     updateChart: function (callback) {
+    	$("#loader").show();
+
     	var energyPoints = [];
     	var fatPoints = [];
     	var proteinsPoints = [];
@@ -314,11 +316,13 @@ module.exports = StatsView = Backbone.View.extend({
 			// refresh view.
 			chartEnergy.render();
 			chartNutrition.render();
+	    	$("#loader").hide();
 			if(callback)
 				callback();
 		});
 	},
     showTicketData : function(timestamp){
+    	$("#loader").show();
     	var date = new Date(timestamp);
 		var day = new Date(date.getFullYear(), date.getMonth(), date.getDate());
     	dataView = new DataView({

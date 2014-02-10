@@ -26,6 +26,7 @@ module.exports = DataView = Backbone.View.extend({
     },
     
     getData: function(){
+    	$("#show").hide();
     	// asks server for product without infos.
     	var that = this;
     	var productBody = this.$el.find("#products-body");
@@ -35,10 +36,12 @@ module.exports = DataView = Backbone.View.extend({
     		$.each(data, function(key, val) {
     			productBody.append(productRowTemplate(val));
     		});
+        	$("#loader").hide();
     	});
     },
     
     postData: function(e){
+    	$("#loader").show();
     	e.preventDefault();
     	var formData = $("form").serialize();
     	var that = this;

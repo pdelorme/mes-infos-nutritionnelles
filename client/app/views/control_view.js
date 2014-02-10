@@ -19,10 +19,15 @@ module.exports = ControlView = Backbone.View.extend({
 
     render: function() {
         this.$el.html(this.template());
-        this.getData();
+        var that = this;
+        // async to allow proper refresh.
+        setTimeout(function(){
+        	that.getData();
+        },0);        
     },
     
     getData: function(){
+    	$("#loader").show();
     	// asks server for product without infos.
     	var that = this;
     	var productBody = this.$el.find("#products-body");
@@ -33,10 +38,12 @@ module.exports = ControlView = Backbone.View.extend({
     		$.each(data, function(key, val) {
     			productBody.append(productRowTemplate(val));
     		});
+        	$("#loader").hide();
     	});
     },
     
     postData: function(e){
+    	$("#loader").show();
     	e.preventDefault();
     	var formData = $("form").serialize();
     	var productBody = this.$el.find("#products-body");
