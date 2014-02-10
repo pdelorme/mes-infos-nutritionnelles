@@ -1,6 +1,6 @@
 {
   "name": "mes-infos-nutritionnelles",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Appli Mes-Info de suivi nutritionnel, basé sur les tickets de caisse.",
   "repository": {
     "type": "git",
@@ -31,6 +31,12 @@
     },
     "ReceiptDetail": {
         "description": "Visualiser les lignes de vos tickets de caisse."
+    },
+    "receiptstat":{
+    	"description": "Calculer et visualiser les statistiques nutritionnelles des tickets de caisses"
+    },
+    "FoodFact":{
+    	"description": "informations nutritionnelles des produits alimentaires"
     }
   }
 }

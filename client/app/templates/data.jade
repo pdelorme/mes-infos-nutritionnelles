@@ -4,12 +4,12 @@ OpenFoodFacts = "<strong><span style='color:red'>Ope</span><span style='color:or
 div
   script#header(type="text/html")
     .col-md-12
-      H2  Détail des achats du jour <%= new Date(day).toLocaleDateString() %>
+      H2  Détail des achats du <%= new Date(day).toLocaleDateString() %>
       p
-        | Vous pouvez voir et corriger ici les info nutritionnelles associé au ticket de caisse selectionné.<br/>
+        | Vous pouvez voir et corriger ici les infos nutritionnelles associées au ticket de caisse selectionné.<br/>
         | les informations saisies ici seront envoyées à !{OpenFoodFacts} pour réutilisation par d'autre personnes du panel MesInfos et plus généralement par tous les utilisateurs de la base de donnée ouverte !{OpenFoodFacts}.<br/>
         | Merci de saisir les données nutritionnelles avec soins.
-        | Les statisitues seront mise à jour après correction.
+        | Les statisiques !{MesInfoNutritionelles} seront mise à jour immédiatement après correction.
       
     .col-md-12
       form(role="form",action="postFoodfacts",method="post")
