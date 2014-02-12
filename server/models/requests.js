@@ -50,25 +50,11 @@ module.exports = {
         	}
         },
         productsByDay: function(doc) {
-    		var date = new Date(doc.timestamp);
-    		var day = ""+date.getFullYear()+"-"+date.getMonth()+"-"+date.getDate();
-    		emit(day, doc);
+    		//var date = new Date(doc.timestamp);
+    		//var day = ""+date.getFullYear()+"-"+date.getMonth()+"-"+date.getDate();
+    		//emit(day, doc);
+    		emit(doc.timestamp.slice(0, 10), doc);
         }
-//      	,
-//        	reduce: function (key, values, rereduce) {
-//        		return {
-//        			_id : values[0].barcode,
-//        			barcode : values[0].barcode,
-//        			label : values[0].label,
-//        			count : values.length,
-//        			family: values[0].family,
-//        			familyLabel : values[0].familyLabel,
-//        			section: values[0].section,
-//        			sectionLabel: values[0].sectionLabel,
-//        			price : values[0].price
-//        		}
-//        	}
-//        }
     },
     foodfact: {
     	all: americano.defaultRequests.all,
