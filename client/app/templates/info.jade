@@ -1,22 +1,37 @@
 MesInfoNutritionelles = "<strong> <span style='font-style:italic'>Mes Infos</span> Nutritionnelles</strong>"
 OpenFoodFacts = "<strong><span style='color:red'>Ope</span><span style='color:orange'>nFoo</span><span style='color:green'>dFac</span><span style='color:blue'>ts</span></strong>"
 
-.col-md-7
-  H2 Bienvenue sur MesInfos Nutritionelles
-  p
-    | !{MesInfoNutritionelles} vous permet de suivre votre nutrition en se basant directement sur vos tickets d'achat Intermarché.<br/>
-    | Elle vous permet de suivre votre consommation en calories, protides, lipides, glucides à la source sans avoir à peser quotidiennement vos aliments pour faire un suivi nutritionnel précis.
+  .header
+    .container
+      .row
+        .col-md-11
+          H2 
+            span MesInfos Nutritionelles
+          p.col-md-8
+            | !{MesInfoNutritionelles} vous permet de suivre votre nutrition en se basant directement sur vos tickets d'achat Intermarché.<br/>
+            | Elle vous permet de suivre votre consommation en calories, protides, lipides, glucides à la source sans avoir à peser quotidiennement vos aliments pour faire un suivi nutritionnel précis.
+        .col-md-1
+          img(src="logo_mes_infos.png").logo
     
-.col-md-5.text-center
-  img(src="logo.png")
-
-br
-.col-md-3.text-center
-  img(src="openfoodfacts-logo-fr.png")
-.col-md-9
-  H2 OpenFoodFact
-  p
-    | !{MesInfoNutritionelles} fonctionne en croisant vos informations d'achat avec la base de données ouverte !{OpenFoodFacts}. <br/>
-    | Cette base de données référence les données nutritionnelles de dizaines de milliers d'articles de consommation courante. <br/>
-    | Cependant elle ne recense pas tous les produits et l'application !{MesInfoNutritionelles} vous permet d'ajouter vos articles le plus simplement du monde à la base de données !{OpenFoodFacts} afin de pouvoir en bénéficier dans vos statistiques de consommation.<br/>
-    | Les informations nutritionnelles saisies par vous sont immédiatement accessible aux autres utilisateurs de l'application !{MesInfoNutritionelles} ainsi qu'à tous les utilisateurs de la base !{OpenFoodFacts}. 
+  .content(style="height:240px")
+    .container
+      br
+      br
+      .row
+        .col-md-12.text-center
+          img(src="schema_home.png")
+        .col-md-9
+  .container
+    br
+    br
+    br
+    br
+    .row
+      .col-md-2
+        p &nbsp;
+      .col-md-8
+        p
+          | !{MesInfoNutritionelles} fonctionne en croisant vos informations d'achat avec la base de données ouverte !{OpenFoodFacts}. <br/>
+          | Cette base de données référence les données nutritionnelles de dizaines de milliers d'articles de consommation courante. <br/>
+          | Cependant elle ne recense pas tous les produits et l'application !{MesInfoNutritionelles} vous permet d'ajouter vos articles le plus simplement du monde à la base de données !{OpenFoodFacts} afin de pouvoir en bénéficier dans vos statistiques de consommation.<br/>
+          | Les informations nutritionnelles saisies par vous sont immédiatement accessible aux autres utilisateurs de l'application !{MesInfoNutritionelles} ainsi qu'à tous les utilisateurs de la base !{OpenFoodFacts}. 

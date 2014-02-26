@@ -1,3 +1,18 @@
+@font-face {
+    font-family: 'Robot-Regular'; 
+    src: url('/fonts/RobotoCondensed-Regular.ttf');
+}
+@font-face {
+    font-family: 'Robot-Bold'; 
+    src: url('/fonts/RobotoCondensed-Bold.ttf');
+}
+H1,H2,H3{
+	font-family: 'Robot-Bold';
+}
+body {
+	font-family: 'Robot-Regular';
+}
+
 #modal-overlay {
     position: fixed;
     z-index: 10;
@@ -53,9 +68,10 @@ body {
 }
 .header {
 	background-image: url('/fond_nappe.jpg');
-	background-position: 0,0;
+	background-position: top, left;
 	background-repeat: repeat;
 	color:white;
+	min-height:200px;
 }
 H2 {
 	line-height:58px;
@@ -84,6 +100,8 @@ H2 span {
 .content {
 	height:100%;
   background-color:rgb(255,235,166);
+  padding-top:15px;
+  padding-bottom:15px;
 }
 
 #tab-content{

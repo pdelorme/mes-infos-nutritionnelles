@@ -37,6 +37,7 @@ module.exports = DataView = Backbone.View.extend({
     			productBody.append(productRowTemplate(val));
     		});
         	$("#loader").hide();
+            $(document).scrollTo("#dataContainer",1000, {offset:-50});
     	});
     },
     

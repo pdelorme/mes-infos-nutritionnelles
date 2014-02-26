@@ -1,23 +1,23 @@
 MesInfoNutritionelles = "<strong> <span style='font-style:italic'>Mes Infos</span> Nutritionnelles</strong>"
 OpenFoodFacts = "<strong><span style='color:red'>Ope</span><span style='color:orange'>nFoo</span><span style='color:green'>dFac</span><span style='color:blue'>ts</span></strong>"
 
+div#all
   .header
     .container
       .row
-        .col-md-9
+        .col-md-11
           H2  
             span Statistiques d'achat nutritionnelles
-          p.col-md-7
+          p.col-md-8
             | Ce diagramme montre les calories, protéines, lipides et glucides par date d'achat et étalés dans le temps.<br/>
             | En cliquant sur une date, vous pourrez voir la liste des achats du jour et vérifier/compléter les informations nutritionnelles de chaque produit afin de corriger votre diagramme.
-        .col-md-3.text-center
+        .col-md-1
           img(src="logo_mes_infos.png").logo
-       .row
-         | <br/>
   
   #chartContainer.content
     .container
-      | <br><br>
+      br
+      br
       .row
         .col-md-12.chart
           .col-md-6
@@ -28,7 +28,7 @@ OpenFoodFacts = "<strong><span style='color:red'>Ope</span><span style='color:or
           .col-md-6
             div.text-center 
               img(src="titre_energie.png") 
-            | <br/>
+            br
           .col-md-6
             div.text-center 
               img(src="titre_compo_nutri.png")

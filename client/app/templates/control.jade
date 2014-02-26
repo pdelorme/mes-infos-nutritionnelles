@@ -1,35 +1,57 @@
 MesInfoNutritionelles = "<strong> <span style='font-style:italic'>Mes Infos</span> Nutritionnelles</strong>"
 OpenFoodFacts = "<strong><span style='color:red'>Ope</span><span style='color:orange'>nFoo</span><span style='color:green'>dFac</span><span style='color:blue'>ts</span></strong>"
 
-.col-md-9
-  H2  Ecran de controle
-  p
-    | Ce formulaire vous permet de lister les produits dont les informations nutritionnelles n'ont pas été saisies dans la base de données !{OpenFoodFacts}.<br/>
-    | les informations saisies ici seront envoyées à !{OpenFoodFacts} pour réutilisation par d'autre personnes du panel MesInfos et plus généralement par tous les utilisateurs de la base de donnée ouverte !{OpenFoodFacts}.<br/>
-    | Merci de saisir les données nutritionnelles avec soins.
-.col-md-3.text-center
-  img(src="openfoodfacts-logo-fr.png")
-  
-.col-md-12
+  .header
+    .container
+      .row
+        .col-md-11
+          H2
+            span Controle des données nutritionnelles
+         .col-md-1
+          img(src="logo_mes_infos.png").logo
+       .row
+         br
   form(role="form",action="postFoodfacts",method="post")
-    table(class="table table-striped table-hover table-condensed")
-      thead
-        th(colspan="5")
-          button.btn.btn-primary(type="submit") Envoyer les modifications
-      thead
-        th code barre
-        th.col-md-4 nom de l'article
-        th.col-md-1.text-center poid<br/>(Grammes)
-        th.col-md-1.text-center calories <br/>(KJoules)
-        th.col-md-1.text-center lipides <br/>(Grammes)
-        th.col-md-1.text-center proteines <br/>(Grammes)
-        th.col-md-1.text-center glucides <br/>(Grammes)
-        th.col-md-1 dernière date d'achat
-      tbody#products-body
-      tfoot
-        td(colspan="5")
-          button.btn.btn-primary(type="submit") Envoyer les modifications
-    
+    .content
+      #dataContainer.container
+        table
+          tr
+            td.col-md-2
+              img(src="openfoodfacts-logo-fr.png")
+            td.col-md-7
+              p
+                br
+                | Ce formulaire vous permet de lister les produits dont les informations nutritionnelles n'ont pas été saisies dans la base de données !{OpenFoodFacts}.<br/>
+                | les informations saisies ici seront envoyées à !{OpenFoodFacts} pour réutilisation par d'autre personnes du panel MesInfos et plus généralement par tous les utilisateurs de la base de donnée ouverte !{OpenFoodFacts}.<br/>
+                | Merci de saisir les données nutritionnelles avec soins.
+            td.col-md-3(style="vertical-align:bottom;padding-right:0px")
+              input(type="image",src="bout_envoyer.jpg",alt="Envoyer les modifications").pull-right  
+    .container
+      .row
+        .col-md-12
+          br
+          table(class="table table-striped table-hover table-condensed")
+            thead
+              th.col-md-0 Code barre
+              th.col-md-7 Nom de l'article
+              th.col-md-1.text-center 
+                img(src="picto_poids.png")
+                | <br/>Poid&nbsp;(g)
+              th.col-md-1.text-center 
+                img(src="picto_calories.png")
+                | <br/>Calories&nbsp;(Kj)
+              th.col-md-1.text-center 
+                img(src="picto_calories.png")
+                | <br/> Lipides&nbsp;(g)
+              th.col-md-1.text-center 
+                img(src="picto_proteines.png")
+                | <br/>Proteines&nbsp;(g)
+              th.col-md-1.text-center 
+                img(src="picto_glucides.png")
+                | <br/>Glucides&nbsp;(g)
+            tbody#products-body
+          div.pull-right
+            input(type="image",src="bout_envoyer.jpg",alt="Envoyer les modifications")    
     
 script#template-row(type="text/html")
   tr
