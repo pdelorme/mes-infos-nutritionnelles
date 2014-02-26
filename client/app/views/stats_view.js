@@ -1,5 +1,12 @@
 var ReceiptCollection = require('../collections/receipts');
 
+var beige = "247,246,226";
+var yellow = "255,235,166";
+var black = "47,53,67";
+var green = "49,204,200";
+var pink = "255,154,146";
+var red = "235,105,92";
+
 module.exports = StatsView = Backbone.View.extend({
 
     tagName: 'div',
@@ -34,13 +41,13 @@ module.exports = StatsView = Backbone.View.extend({
     	var chartNutritionContainer = this.$el.find("#chartNutritionContainer");
     	var that = this;
 		var chartEnergy = new CanvasJS.Chart(chartEnergyContainer,{
-			zoomEnabled: true,
+			//zoomEnabled: true,
 		    panEnabled: true, 
+		    backgroundColor: "rgb("+yellow+")",
 		    toolTip: {
 		        borderColor:"white"//shared: "false"  //disable here. 
 		    },
 		    title:{
-				text: "Energie",
 				fontSize:15,
 				fontFamily:"arial",
 				fontWeight:"normal",
@@ -83,7 +90,7 @@ module.exports = StatsView = Backbone.View.extend({
 			       // energy
 			       {
 			    	   type: "area",
-			    	   color: "rgba(54,158,173,.3)",
+			    	   color: "rgba("+green+",.3)",
 			    	   showInLegend: true,
 			    	   name:"energie/jour (Kj)",
 			    	   toolTipContent: "<span style='\"'color: {color};'\"'>energie/jour</span> : {y} Kj", 
@@ -93,7 +100,7 @@ module.exports = StatsView = Backbone.View.extend({
 			       },
 			       {
 			    	   type: "column",
-			    	   color: "rgba(54,158,173,.7)",
+			    	   color: "rgba("+green+",.7)",
 			    	   showInLegend: true,
 			    	   toolTipContent: "<span style='\"'color: {color};'\"'>{x}</span> : {y} Kj", 
 			    	   name:"energie (Kj)",
@@ -111,14 +118,14 @@ module.exports = StatsView = Backbone.View.extend({
 			 ]
 		});
 		var chartNutrition = new CanvasJS.Chart(chartNutritionContainer,{
-			zoomEnabled: true,
+			//zoomEnabled: true,
 		    panEnabled: true, 
+		    backgroundColor: "rgb("+yellow+")",
 		    toolTip: {
 		    	borderColor:"white",
 		        shared: "true"  //disable here. 
 		      },
 			title:{
-				text: "Composition Nutritionnelle",
 				fontFamily:"arial",
 				fontSize:15,
 				fontWeight:"normal",
@@ -161,7 +168,7 @@ module.exports = StatsView = Backbone.View.extend({
 			       // fat
 			       {
 			    	   type: "stackedColumn",
-			    	   color: "rgba(8,15,173,.7)",
+			    	   color: "rgba("+black+",.7)",
 			    	   showInLegend: true,
 			    	   name:"lipides (g)",
 			    	   toolTipContent: "<span style='\"'color: {color};'\"'>lipides </span>: {y} g", 
@@ -175,7 +182,7 @@ module.exports = StatsView = Backbone.View.extend({
 			       },
 			       {
 			    	   type: "stackedArea",
-			    	   color: "rgba(8,15,173,.3)",
+			    	   color: "rgba("+black+",.3)",
 			    	   //showInLegend: true,
 			    	   name:"lipides/jour (g)",
 			    	   toolTipContent: "<span style='\"'color: {color};'\"'>lipides/jours </span>: {y} g/j", 
@@ -185,7 +192,7 @@ module.exports = StatsView = Backbone.View.extend({
 			       // proteins
 			       {
 			    	   type: "stackedColumn",
-			    	   color: "rgba(54,58,73,.7)",
+			    	   color: "rgba("+red+",.7)",
 			    	   showInLegend: true,
 			    	   name:"protéines (g)",
 			    	   toolTipContent: "<span style='\"'color: {color};'\"'>protéines </span>: {y} g", 
@@ -199,7 +206,7 @@ module.exports = StatsView = Backbone.View.extend({
 			       },
 			       {
 			    	   type: "stackedArea",
-			    	   color: "rgba(54,58,73,.3)",
+			    	   color: "rgba("+red+",.3)",
 			    	   //showInLegend: true,
 			    	   toolTipContent: "", 
 			    	   toolTipContent: "<span style='\"'color: {color};'\"'>protéines/jours </span>: {y} g/j", 
@@ -209,7 +216,7 @@ module.exports = StatsView = Backbone.View.extend({
 			       // carbohydrates
 			       {
 			    	   type: "stackedColumn",
-			    	   color: "rgba(54,158,73,.7)",
+			    	   color: "rgba("+pink+",.7)",
 			    	   showInLegend: true,
 			    	   name:"glucides (g)",
 			    	   toolTipContent: "<span style='\"'color: {color};'\"'>glucides </span>: {y} g", 
@@ -225,7 +232,7 @@ module.exports = StatsView = Backbone.View.extend({
 			       },
 			       {
 			    	   type: "stackedArea",
-			    	   color: "rgba(54,158,73,.3)",
+			    	   color: "rgba("+pink+",.3)",
 			    	   //showInLegend: true,
 			    	   name:"glucides/jour (g)",
 			    	   toolTipContent: "<span style='\"'color: {color};'\"'>glucides/jours </span>: {y} g/j", 

@@ -20,9 +20,9 @@
 }
 
 .chart {
-	height:440px;
-	padding-left:0px;
-	padding-right:0px;
+	height:410px;
+	padding-left:10px;
+	padding-right:10px;
 	
 }
 
@@ -47,4 +47,63 @@ table>tbody#products-body>tr>td {
 table>tbody#products-body img {
 	height:40px;
 	width:40px;
+}
+body {
+	background-color: rgb(247,246,226);
+}
+.header {
+	background-image: url('/fond_nappe.jpg');
+	background-position: 0,0;
+	background-repeat: repeat;
+	color:white;
+}
+H2 {
+	line-height:58px;
+	height:58px;
+	background-image: url('/extremite_bandeau_titre.png');
+	background-position:right;
+	background-repeat:no-repeat;
+	display:inline-flex;
+	padding-right:20px;
+	position:relative;
+	left:-50px;
+}
+H2 span {
+  background-color: rgb(49,204,200);
+  color:white;
+  line-height:58px;
+  height:58px;
+  padding-left:15px;
+  padding-right:15px;
+  text-transform: uppercase;
+  font-weight: bold;
+  padding-left:62px;
+  padding-right:30px;
+}
+
+.content {
+	height:100%;
+  background-color:rgb(255,235,166);
+}
+
+#tab-content{
+	top:51px;
+	position:relative;
+}
+table th {
+	color:rgb(49,204,200);
+}
+table th img {
+	padding-bottom:5px;
+}
+.table-striped>tbody>tr:nth-child(odd)>td, .table-striped>tbody>tr:nth-child(odd)>th {
+  background-color: rgb(255,235,166);
+}
+
+.logo {
+	vertical-align: middle;
+	position: absolute;
+	right: 30px;
+	top: 20px;
+	z-index: 10;
 }

@@ -4,38 +4,50 @@ OpenFoodFacts = "<strong><span style='color:red'>Ope</span><span style='color:or
 div
   script#header(type="text/html")
     .col-md-12
-      H2  Détail des achats du <%= new Date(day).toLocaleDateString() %>
+      H2 
+        span Détail des achats du <%= new Date(day).toLocaleDateString() %>
       p
         | Vous pouvez voir et corriger ici les infos nutritionnelles associées au ticket de caisse selectionné.<br/>
         | Les informations saisies ici seront envoyées à !{OpenFoodFacts} pour réutilisation par d'autre personnes du panel MesInfos et plus généralement par tous les utilisateurs de la base de données ouverte !{OpenFoodFacts}.<br/>
         | Merci de saisir les données nutritionnelles avec soin.
-        | Les statisiques !{MesInfoNutritionelles} seront mises à jour immédiatement après correction.
+        | Les statisiques !{MesInfoNutritionelles} seront mises à jour immédiatement après correction.<br/>
       
     .col-md-12
       form(role="form",action="postFoodfacts",method="post")
+        div.pull-right
+          | <br>
+          input(type="image",src="bout_envoyer.jpg",alt="Envoyer les modifications")
+          | <br><br>
         table(class="table table-striped table-hover table-condensed")
           thead
-            th(colspan="5")
-              button.btn.btn-primary(type="submit") Envoyer les modifications
-          thead
-            th code bare
-            th.col-md-1 nom de l'article
-            th.col-md-1.text-center poid<br/>(Grammes)
-            th.col-md-1.text-center calories <br/>(KJoules)
-            th.col-md-1.text-center lipides <br/>(Grammes)
-            th.col-md-1.text-center proteines <br/>(Grammes)
-            th.col-md-1.text-center glucides <br/>(Grammes)
+            th.col-md-0 Code barre
+            th.col-md-7 Nom de l'article
+            th.col-md-1.text-center 
+              img(src="picto_poids.png")
+              | <br/>Poid&nbsp;(g)
+            th.col-md-1.text-center 
+              img(src="picto_calories.png")
+              | <br/>Calories&nbsp;(Kj)
+            th.col-md-1.text-center 
+              img(src="picto_calories.png")
+              | <br/> Lipides&nbsp;(g)
+            th.col-md-1.text-center 
+              img(src="picto_proteines.png")
+              | <br/>Proteines&nbsp;(g)
+            th.col-md-1.text-center 
+              img(src="picto_glucides.png")
+              | <br/>Glucides&nbsp;(g)
           tbody#products-body
-          tfoot
-            td(colspan="5")
-              button.btn.btn-primary(type="submit") Envoyer les modifications
+        div.pull-right
+          | <br><br>
+          input(type="image",src="bout_envoyer.jpg",alt="Envoyer les modifications")
     
     
   script#template-row(type="text/html")
     tr
       td(style="vertical-align:middle") 
         img.image(src!='http://drive.intermarche.com/ressources/images/produit/vignette/0<%= barcode %>.jpg',width="53",height="53",title!='code barre : <%= barcode %>&#10;Libellé Intermarché : <%= shop_label %>', alt!='<%= shop_label %>')
-      td(width="100%")
+      td
         input(name!="changed_<%= barcode %>",type="hidden",value="false")
         input.form-control(name!="name_<%= barcode %>",type="text",placeholder="Nom de l'article",value!="<%= name?name:'' %>")
       td
