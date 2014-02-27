@@ -8,7 +8,7 @@ var ReceiptStat = require('../models/receiptstat');
 var Constants = require('./constants');
 var openFoodFactsClient = JsonRequest.newClient('http://fr.openfoodfacts.org/');
 var fs = require('fs');
-var debug=false;
+var debug=true;
 
 module.exports.cleanDatabase = function(req, res) {
 	cleanDatabase(function(){
@@ -55,9 +55,14 @@ module.exports.generateDummyData = function(req, res){
 module.exports.touch = function(req, res) {
   require('../models/receiptdetail').touch();
   require('../models/receipt').touch();
-  require('../models/receiptstat').touch();
-  require('../models/foodfact').touch();
-  res.send(200);
+  updateAllFoodfacts(yesterday(),
+    function(){
+      require('../models/receiptstat').touch();
+      require('../models/foodfact').touch();    
+    }
+  );
+  if(res)
+    res.send(200,"OK");
 }
 /**
  * retourne les stats nutritionelles.
@@ -146,28 +151,6 @@ function cleanDatabase(done){
 	    }
 	    done();
 	});
-//	FoodFact.all(function(err, foodfacts) {
-//	    if(err != null) {
-//	      console.log("error : ", err);
-//	      return;
-//	    }
-//	    var batch = new Batch;
-//	    batch.concurrency(10);
-//	    for (idx in foodfacts) {
-//	    	foodfact = foodfacts[idx];
-//	    	(function(foodfact){
-//		    	batch.push(function(done) { 
-//		    		foodfact.destroy(function(){
-//		    			done();
-//		    		});
-//		    	});
-//	    	})(foodfact);
-//	    }
-//	    batch.end(function(err, users){
-//	    	console.log("cleanDatabase finished");
-//	    	done();
-//	    });
-//	});
 }
 
 /**
@@ -183,27 +166,8 @@ function cleanAllStats(done){
 	    }
 	    done();
 	});
-//	ReceiptStat.all(function(err, stats) {
-//	    if(err != null) {
-//	      console.log("error : ", err);
-//	      return;
-//	    }
-//	    var batch = new Batch;
-//	    batch.concurrency(10);
-//	    for (idx in stats) {
-//	    	var stat = stats[idx];
-//	    	batch.push(function(done) { 
-//	    		stat.destroy(done); 
-//	    	});
-//	    }
-//	    batch.end(function(err, users){
-//	    	if(err)
-//	    		console.log(err);
-//	    	console.log("cleanAllStats finished");
-//	    	done();
-//	    });
-//	});
 }
+
 /**
  * itère sur tous les articles de ticket de caisse et questionne OpenFoodFacts pour les info nutritionnelles.
  * les infos sont stockées localement pour éviter de surcharger openfoodfacts et améliorer les performances.
@@ -211,6 +175,7 @@ function cleanAllStats(done){
  * @param done : callback when over.
  */
 function updateAllFoodfacts(timefloor, done){
+    var startTime = Date.now();
 	if(!timefloor)
 	  timefloor = new Date();
 	ReceiptDetail.all(function(err, products) {
@@ -235,11 +200,15 @@ function updateAllFoodfacts(timefloor, done){
 	    batch.end(function(err, users){
 	    	if(err)
 	    		console.log(err);
-	    	console.log("buildNutritionalData finished");
-	    	done();
+	    	console.log("all foodfacts updated in " + (Date.now() - startTime) + "ms");
+	    	if(done)
+	    	  done();
 	    });
 	  });
 }
+module.exports.updateAllFoodfacts = function(timefloor, done){
+  updateAllFoodfacts(timefloor, done);
+};
 
 /**
  * itère sur toutes les lignes de caisse et crée des stats bidons.
@@ -302,6 +271,7 @@ function generateDummyData(done){
  * "http://fr.openfoodfacts.org/api/v0/produit/"+ barcode +".json"
  */
 function updateFoodfact(product, timefloor, done){
+    var startTime = Date.now();
 	// vérifie si elle sont présentes en base.
 	FoodFact.byBarcode(product.barcode,function(err,foodfact) {
 		if(foodfact) {
@@ -349,15 +319,19 @@ function updateFoodfact(product, timefloor, done){
 				}
 			}			
 			
-			if(debug)
-				console.log(">>",product.barcode,":",foodfact);
 			if(create){
 				FoodFact.create(foodfact, function(err, foodfact) {
+			       if(debug) {
+		             console.log("foodfact created ",product.barcode," in " + (Date.now() - startTime) + "ms");
+			       }
 			       return done(err);
 				});
 			} else {
 				foodfact.save(function(err,foodfact){
-				    return done(err);
+                  if(debug) {
+                    console.log("foodfact updated ",product.barcode," in " + (Date.now() - startTime) + "ms");
+                  }
+				  return done(err);
 				});
 			}
 		});
@@ -743,6 +717,9 @@ function yesterday(){
 	yesterday.setDate(yesterday.getDate() - 1);
 	return yesterday;
 }
+module.exports.yesterday = function(){
+  return yesterday();
+};
 
 /**
  * retourne vrai si le produit est alimentaire.

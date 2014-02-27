@@ -1,6 +1,6 @@
 {
   "name": "mes-infos-nutritionnelles",
-  "version": "0.0.9",
+  "version": "0.1.0",
   "description": "Appli Mes-Info de suivi nutritionnel, basé sur les tickets de caisse.",
   "repository": {
     "type": "git",
