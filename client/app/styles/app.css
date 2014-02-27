@@ -1,10 +1,10 @@
 @font-face {
     font-family: 'Robot-Regular'; 
-    src: url('/fonts/RobotoCondensed-Regular.ttf');
+    src: url('../fonts/RobotoCondensed-Regular.ttf');
 }
 @font-face {
     font-family: 'Robot-Bold'; 
-    src: url('/fonts/RobotoCondensed-Bold.ttf');
+    src: url('../fonts/RobotoCondensed-Bold.ttf');
 }
 H1,H2,H3{
 	font-family: 'Robot-Bold';
@@ -67,7 +67,7 @@ body {
 	background-color: rgb(247,246,226);
 }
 .header {
-	background-image: url('/fond_nappe.jpg');
+	background-image: url('../fond_nappe.jpg');
 	background-position: top, left;
 	background-repeat: repeat;
 	color:white;
@@ -76,7 +76,7 @@ body {
 H2 {
 	line-height:58px;
 	height:58px;
-	background-image: url('/extremite_bandeau_titre.png');
+	background-image: url('../extremite_bandeau_titre.png');
 	background-position:right;
 	background-repeat:no-repeat;
 	display:inline-flex;
