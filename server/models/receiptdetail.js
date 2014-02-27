@@ -19,6 +19,27 @@ module.exports = ReceiptDetail = americano.getModel('receiptdetail', {
  'isOnlineBuy': Boolean
  });
 
+ReceiptDetail.touch = function() {
+  var cbGen = function(reqName) {
+      var startTime = Date.now();
+
+      return function() {
+          console.log("Touch " + reqName + " in " + (Date.now() - startTime) + "ms");
+      };
+  }
+
+  var params = { 
+      limit: 1,
+      reduce: false
+  };
+
+  ReceiptDetail.rawRequest("all", params, cbGen("receiptdetail/all"));
+  ReceiptDetail.rawRequest("byReceiptId", params, cbGen("receiptdetail/byReceiptId"));  
+  ReceiptDetail.rawRequest("products", params, cbGen("receiptdetail/products"));
+  ReceiptDetail.rawRequest("productsByDay", params, cbGen("receiptdetail/productsByDay"));
+
+};
+
 ReceiptDetail.all = function(callback) {
     ReceiptDetail.request(
         "all", 

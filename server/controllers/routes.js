@@ -35,6 +35,9 @@ module.exports = {
   },
   'dummy' : {
 	  get : Services.generateDummyData
-  }
+  },
+  'touch': {
+    get: Services.touch
+},
 };
 

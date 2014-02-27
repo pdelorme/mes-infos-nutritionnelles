@@ -18,6 +18,26 @@ module.exports = FoodFact = americano.getModel('FoodFact', {
 	last_update: Date
 });
 
+FoodFact.touch = function() {
+  var cbGen = function(reqName) {
+      var startTime = Date.now();
+
+      return function() {
+          console.log("Touch " + reqName + " in " + (Date.now() - startTime) + "ms");
+      };
+  };
+
+  var params = { 
+      limit: 1,
+      reduce: false
+  };
+
+  FoodFact.rawRequest("all", params, cbGen("foodfact/all"));
+  FoodFact.rawRequest("bybarcode", params, cbGen("foodfact/bybarcode"));
+  FoodFact.rawRequest("invalidProducts", params, cbGen("foodfact/invalidProducts"));
+
+};
+
 FoodFact.all = function(callback) {
 	FoodFact.request(
         "all", 

@@ -13,6 +13,25 @@ module.exports = ReceiptStat = americano.getModel('receiptstat', {
 	carbohydrates_unit : String
 });
 
+ReceiptStat.touch = function() {
+  var cbGen = function(reqName) {
+      var startTime = Date.now();
+
+      return function() {
+          console.log("Touch " + reqName + " in " + (Date.now() - startTime) + "ms");
+      };
+  }
+
+  var params = { 
+      limit: 1,
+      reduce: false
+  };
+
+  ReceiptStat.rawRequest("all", params, cbGen("receiptstat/all"));
+  ReceiptStat.rawRequest("byreceiptId", params, cbGen("receiptstat/byreceiptId"));
+  ReceiptStat.rawRequest("bytimestamp", params, cbGen("receiptstat/bytimestamp"));
+};
+
 ReceiptStat.all = function(callback) {
 	ReceiptStat.request(
         "all", 

@@ -21,16 +21,23 @@ module.exports = Receipt = americano.getModel('receipt', {
     'snippet': String
 });
 
-//unused
-//Receipt.all = function(callback) {
-//    Receipt.request(
-//        "all", 
-//        {},
-//        function(err, instances) {
-//            callback(null, instances);
-//        }
-//    );
-//};
+Receipt.touch = function() {
+  var cbGen = function(reqName) {
+      var startTime = Date.now();
+
+      return function() {
+          console.log("Touch " + reqName + " in " + (Date.now() - startTime) + "ms");
+      };
+  };
+
+  var params = { 
+      limit: 1,
+      reduce: false
+  };
+
+  Receipt.rawRequest("byTimestamp", params, cbGen("receipt/byTimestamp"));
+
+};
 
 Receipt.newest = function(callback) {
     Receipt.request(

@@ -50,6 +50,16 @@ module.exports.generateDummyData = function(req, res){
 };
 
 /**
+ * touch all views.
+ */
+module.exports.touch = function(req, res) {
+  require('../models/receiptdetail').touch();
+  require('../models/receipt').touch();
+  require('../models/receiptstat').touch();
+  require('../models/foodfact').touch();
+  res.send(200);
+}
+/**
  * retourne les stats nutritionelles.
  */
 module.exports.receiptStats = function(req, res){
