@@ -91,13 +91,7 @@ module.exports.invalidProducts = function(req, res) {
 
 module.exports.postFoodfacts = function(req, res) {
 	postFoodfacts(req.body, function(err){
-		var returnCode = 200;
-		if(err)
-			returnCode = 418;
-		res.send(returnCode,"OK");
-//		getInvalidProducts(function(products){
-//			res.send(returnCode, products);
-//		});
+		res.send(200,"OK");
 	});
 };
 
@@ -589,6 +583,7 @@ function postFoodfacts(params, done){
  * @param foodfact
  */
 function postOpenFoodFact(foodfact, done){
+    var startTime = Date.now();
 //	if(foodfact.barcode.localeCompare("3073780969000")){
 //		return;
 //	}
@@ -609,18 +604,18 @@ function postOpenFoodFact(foodfact, done){
 		nutriment_carbohydrates_unit:foodfact.carbohydrates_unit,
 		nutrition_data_per:"serving"
 	};
-	console.log("ajout à OenFoodFact",data);
+	if(debug)
+	  console.log("ajout à OenFoodFact",data);
 	Request.post('http://fr.openfoodfacts.org/cgi/product_jqm2.pl', 
 		{form:data},
 		function (error, response, body) {
 	        if(debug)
-	        	console.log(body);
+	        	console.log("postOpenFoodFacts in " + (Date.now() - startTime) + "ms :",body);
 	        var resp = JSON.parse(body);
 	        if(!error && resp.status==1){
-	        	postOpenFoodFactImage(foodfact.barcode, done);
-	        } else {
-	        	if(done) done();
+	        	postOpenFoodFactImage(foodfact.barcode);
 	        }
+	        if(done) done();
 	    }
 	);
 }
@@ -631,7 +626,8 @@ function postOpenFoodFact(foodfact, done){
  * @param barcode
  */
 function postOpenFoodFactImage(barcode, done){
-	if(!barcode)
+  var startTime = Date.now();
+  if(!barcode)
 		return;
 	// 1/ vérifie que le produit existe et n'a pas déja d'image dans off
 	openFoodFactsClient.get("api/v0/produit/"+ barcode +".json", function(err, res, body){
@@ -644,6 +640,8 @@ function postOpenFoodFactImage(barcode, done){
 			return;
 		}
 		if(body.product.image_url){
+		    if(debug)
+              console.log("postOpenFoodFactsImage : déja une image");
 			if (done) done("déja une image");
 			return;
 		}
@@ -659,12 +657,16 @@ function postOpenFoodFactImage(barcode, done){
 				form.append('imgupload_front', fs.createReadStream('temp/zoom_'+barcode+'.jpg'));
 				form.submit('http://fr.openfoodfacts.org/cgi/product_image_upload.pl', 
 					function(err, res) {
+    		            if(debug)
+    		                console.log("postOpenFoodFactsImage : envoyé in " + (Date.now() - startTime) + "ms");
 					  // res – response object (http.IncomingMessage)  //
 					  //res.resume(); // for node-0.10.x
 					  if(done) done(err);
 					}
 				);
 			  } else {
+			      if(debug)
+                    console.log("postOpenFoodFactsImage : pas d'image in " + (Date.now() - startTime) + "ms");
 				  if(done) done("pas d'image");
 			  }
 			  return;

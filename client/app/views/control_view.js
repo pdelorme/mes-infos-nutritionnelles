@@ -50,7 +50,7 @@ module.exports = ControlView = Backbone.View.extend({
 		  type: "POST",
 		  url: 'postFoodfacts',
 		  data: formData,
-		  dataType: "json",
+		  // dataType: "json",
           beforeSend: function(){$("#modal-overlay").show();},
           complete: function(){$("#modal-overlay").hide();},
 		  success: function(data) {

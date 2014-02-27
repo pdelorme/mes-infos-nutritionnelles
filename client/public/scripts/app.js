@@ -271,7 +271,7 @@ attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow |
 var buf = [];
 with (locals || {}) {
 var interp;
-buf.push('<div id="loader"><img src="loader.gif" alt="je charge"/></div><nav role="navigation" class="navbar navbar-default navbar-fixed-top"><div class="container"><div class="navbar-header"><button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a href="#info" class="navbar-brand">MesInfos Nutritionelles</a></div><div class="navbar-collapse collapse"><ul class="nav navbar-nav"><li id="statsMenuItem"><a href="#stats"> Mes Statistiques</a></li><li id="controlMenuItem"><a href="#control">Données Nutritionelles</a></li><li class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle">A Propos<ul class="dropdown-menu"><li> <a>Réalisation <strong>Lookal</strong> &copy; 2014 </a></li><li> <a href="mail:pdelorme@lookal.fr">Contact <strong>pdelorme@lookal.fr</strong></a></li><li> <a>Merci à la Fing et à OpenFoodFacts pour leur assistance.<br/></a></li></ul></a></li></ul></div></div></nav><div id="tab-content"></div>');
+buf.push('<div id="loader"><img src="loader.gif" alt="je charge"/></div><nav role="navigation" class="navbar navbar-default navbar-fixed-top"><div class="container"><div class="navbar-header"><button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a href="#info" class="navbar-brand">MesInfos Nutritionelles</a></div><div class="navbar-collapse collapse"><ul class="nav navbar-nav"><li id="statsMenuItem"><a href="#stats"> Mes Statistiques</a></li><li id="controlMenuItem"><a href="#control">Données Nutritionelles</a></li><li class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle">A Propos<ul class="dropdown-menu"><li> <a>Réalisation <strong>Patrice Delorme / Lookal</strong> &copy; 2014 </a></li><li> <a href="http://www.flavieferrari.com/">Design graphique <strong>http://www.flavieferrari.com/</strong></a></li><li> <a href="mail:pdelorme@lookal.fr">Contact <strong>pdelorme@lookal.fr</strong></a></li><li> <a>Merci à la Fing et à OpenFoodFacts pour leur assistance.<br/></a></li></ul></a></li></ul></div></div></nav><div id="tab-content"></div>');
 }
 return buf.join("");
 };
@@ -467,7 +467,7 @@ module.exports = ControlView = Backbone.View.extend({
 		  type: "POST",
 		  url: 'postFoodfacts',
 		  data: formData,
-		  dataType: "json",
+		  // dataType: "json",
           beforeSend: function(){$("#modal-overlay").show();},
           complete: function(){$("#modal-overlay").hide();},
 		  success: function(data) {
