@@ -57,8 +57,10 @@ module.exports.touch = function(req, res) {
   require('../models/receipt').touch();
   updateAllFoodfacts(yesterday(),
     function(){
-      require('../models/receiptstat').touch();
-      require('../models/foodfact').touch();    
+      buildAllStats(function (){
+        require('../models/foodfact').touch();    
+        require('../models/receiptstat').touch();
+      });
     }
   );
   if(res)
@@ -68,11 +70,9 @@ module.exports.touch = function(req, res) {
  * retourne les stats nutritionelles.
  */
 module.exports.receiptStats = function(req, res){
-	buildAllStats(function(err){
-		getReceiptStats(function(receiptStats){
-			res.send(200, receiptStats);
-		});
-	});
+  getReceiptStats(function(receiptStats){
+    res.send(200, receiptStats);
+  });
 };
 
 /**
@@ -80,13 +80,9 @@ module.exports.receiptStats = function(req, res){
  * Vérifie d'abord qu'aucun nouveau produit n'à été entré dans OpenFoodFact depuis 24H
  */
 module.exports.invalidProducts = function(req, res) {
-	updateAllFoodfacts(yesterday(),
-		function(){
-			getInvalidProducts(function(products){
-			    res.send(200, products);
-			});
-		}
-	);
+  getInvalidProducts(function(products){
+    res.send(200, products);
+  });
 };
 
 module.exports.postFoodfacts = function(req, res) {
@@ -117,7 +113,7 @@ module.exports.test = function(req, res){
 			barcode : '03073780969000',
 			name : 'KIRI GOUTER 280G 8 PORTIONS - TEST IMAGE',
 			energy: 500,
-			energy_unit: "kJ",
+			energy_unit: "Kj",
 			fat: 731,
 			fat_unit: "g",
 			proteins: 907,
@@ -170,6 +166,7 @@ function cleanAllStats(done){
  */
 function updateAllFoodfacts(timefloor, done){
     var startTime = Date.now();
+    var barcodes = {};
 	if(!timefloor)
 	  timefloor = new Date();
 	ReceiptDetail.all(function(err, products) {
@@ -182,6 +179,9 @@ function updateAllFoodfacts(timefloor, done){
 	    
 	    for (idx in products) {
 	        product = products[idx];
+	        if(product.barcode in barcodes)
+	          continue;
+	        barcodes[product.barcode]="ok";
 	        if(!isFood(product))
 	        	continue;
 	        (function(product){
@@ -277,8 +277,14 @@ function updateFoodfact(product, timefloor, done){
 		if(foodfact && foodfact.last_update && foodfact.last_update.getTime()>=timefloor.getTime()) {
 			return done();
 		}	
+        if(debug) {
+          console.log("updateFoodfact : byBarcode(" + product.barcode +") : "+(Date.now() - startTime) + "ms");
+        }
 		// si non présentes : récupérer depuis openfood facts.
 		openFoodFactsClient.get("api/v0/produit/"+ product.barcode +".json", function(err, res, body){
+		    if(debug) {
+	          console.log("updateFoodfact : get.json(" + product.barcode +") : "+ (Date.now() - startTime) + "ms");
+	        }
 			if(err){
 				console.log("unexpected error :",err);
 				return done();
@@ -316,14 +322,14 @@ function updateFoodfact(product, timefloor, done){
 			if(create){
 				FoodFact.create(foodfact, function(err, foodfact) {
 			       if(debug) {
-		             console.log("foodfact created ",product.barcode," in " + (Date.now() - startTime) + "ms");
+		             console.log("updateFoodfact : insert(",product.barcode,") :" + (Date.now() - startTime) + "ms");
 			       }
 			       return done(err);
 				});
 			} else {
 				foodfact.save(function(err,foodfact){
                   if(debug) {
-                    console.log("foodfact updated ",product.barcode," in " + (Date.now() - startTime) + "ms");
+                    console.log("updateFoodfact : update(",product.barcode,") : " + (Date.now() - startTime) + "ms");
                   }
 				  return done(err);
 				});
@@ -340,10 +346,11 @@ function updateFoodfact(product, timefloor, done){
  * 4/ stocke dans le ticket.
  */
 function buildAllStats(done){
+    var startTime = Date.now();
 	// 1/ clear all stats data.
 	cleanAllStats(function(){
 		// 2/ build stats.
-		console.log("building all stats");
+		console.log("buildAllStats : start");
 		Receipt.all(function(err, allReceipt) {
 		    if(err != null) {
 		      console.log("error : ", err);
@@ -366,7 +373,9 @@ function buildAllStats(done){
 		    batch.end(function(err, users){
 		    	if(err)
 		    		console.log(err);
-		    	console.log("buildNutritionalData finished");
+		    	if(debug) {
+                  console.log("buildAllStats in " + (Date.now() - startTime) + "ms");
+                }
 		    	if(done)
 		    		done();
 		    });
@@ -383,7 +392,7 @@ function buildAllStats(done){
 function buildReceiptStat(receipt, done){
 	if(!receipt)
 		done();
-	console.log("buildReceiptStat starting");
+	//console.log("buildReceiptStat starting");
 	var receiptStat = {
 			_id:receipt.receiptId,
 			receiptId : receipt.receiptId,
@@ -417,7 +426,7 @@ function buildReceiptStat(receipt, done){
 						foodfact = foodfact[0];
 						if(foodfact.energy) {
 							receiptStat.energy += foodfact.energy;
-							if(receiptStat.energy_unit != foodfact.energy_unit)
+							if(receiptStat.energy_unit.toUpperCase() != foodfact.energy_unit.toUpperCase())
 								console.log("WARNING : ENERGY UNITS ARE DIFFERENTS :",receiptStat.energy_unit,foodfact.energy_unit);
 						}
 						if(foodfact.fat) {
@@ -442,7 +451,7 @@ function buildReceiptStat(receipt, done){
 		}
 
 		batch.end(function(err, users){
-			console.log("buildReceiptStat finished");
+			//console.log("buildReceiptStat finished");
 			ReceiptStat.create(receiptStat, function(err, receiptStat) {
 				return done(err);
 			});
@@ -610,7 +619,7 @@ function postOpenFoodFact(foodfact, done){
 		{form:data},
 		function (error, response, body) {
 	        if(debug)
-	        	console.log("postOpenFoodFacts in " + (Date.now() - startTime) + "ms :",body);
+	        	console.log("postOpenFoodFacts post("+foodfact.barcode+") : " + (Date.now() - startTime) + "ms :", body);
 	        var resp = JSON.parse(body);
 	        if(!error && resp.status==1){
 	        	postOpenFoodFactImage(foodfact.barcode);
@@ -632,24 +641,32 @@ function postOpenFoodFactImage(barcode, done){
 	// 1/ vérifie que le produit existe et n'a pas déja d'image dans off
 	openFoodFactsClient.get("api/v0/produit/"+ barcode +".json", function(err, res, body){
 		if(err){
+		    if(debug)
+              console.log("postOpenFoodFactsImage getOFF("+barcode+") : erreur iconnu :" +err+" : "+ (Date.now() - startTime) + "ms :");
 			if (done) done(err);
 			return;
 		}
 		if(body.status==0){
+		    if(debug)
+              console.log("postOpenFoodFactsImage getOFF("+barcode+") : produit iconnu :" + (Date.now() - startTime) + "ms :");
 			if (done) done("produit inconnu");
 			return;
 		}
 		if(body.product.image_url){
 		    if(debug)
-              console.log("postOpenFoodFactsImage : déja une image");
+              console.log("postOpenFoodFactsImage getOFF("+barcode+") : déja une image :" + (Date.now() - startTime) + "ms :");
 			if (done) done("déja une image");
 			return;
 		}
 		fixedcode = String('00000000000000'+barcode).slice(-14);
 		// 2/ charge l'image pour ce code bare.
+		if(debug)
+          console.log("postOpenFoodFactsImage gettingImage("+barcode+") :" + (Date.now() - startTime) + "ms :");
 		Request('http://drive.intermarche.com/ressources/images/produit/zoom/'+fixedcode+'.jpg',
 			function (error, response, body) {
 			  if (!error && response.statusCode == 200) {
+			    if(debug)
+		          console.log("postOpenFoodFactsImage gettingImage("+barcode+") : ok :" + (Date.now() - startTime) + "ms :");
 				// 3/ envoi de l'image.
 				var form = new FormData();
 				form.append('code', barcode);
@@ -658,7 +675,7 @@ function postOpenFoodFactImage(barcode, done){
 				form.submit('http://fr.openfoodfacts.org/cgi/product_image_upload.pl', 
 					function(err, res) {
     		            if(debug)
-    		                console.log("postOpenFoodFactsImage : envoyé in " + (Date.now() - startTime) + "ms");
+    		              console.log("postOpenFoodFactsImage submitingImage("+barcode+") :" +(err?"failed":"ok")+":"+ (Date.now() - startTime) + "ms :");
 					  // res – response object (http.IncomingMessage)  //
 					  //res.resume(); // for node-0.10.x
 					  if(done) done(err);
@@ -666,7 +683,7 @@ function postOpenFoodFactImage(barcode, done){
 				);
 			  } else {
 			      if(debug)
-                    console.log("postOpenFoodFactsImage : pas d'image in " + (Date.now() - startTime) + "ms");
+                    console.log("postOpenFoodFactsImage gettingImage("+barcode+"): failed :" + (Date.now() - startTime) + "ms :");
 				  if(done) done("pas d'image");
 			  }
 			  return;
