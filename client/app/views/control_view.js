@@ -32,7 +32,11 @@ module.exports = ControlView = Backbone.View.extend({
     	$.getJSON('invalidProducts', function(data) {
         	productBody.html("");
     		$.each(data, function(key, val) {
-    			productBody.append(productRowTemplate(val));
+    		    if(val.shop_label){
+    		      productBody.append(productRowTemplate(val));
+    		    } else {
+    		      console.log(val);
+    		    }
     		});
         	$("#loader").hide();
     	});
@@ -54,8 +58,11 @@ module.exports = ControlView = Backbone.View.extend({
           beforeSend: function(){$("#modal-overlay").show();},
           complete: function(){$("#modal-overlay").hide();},
 		  success: function(data) {
-	        	that.getData();
-	    	},
+	        // recharge la page.
+		    that.getData();
+		    // recalcule les stats
+	        $.get('buildAllStats');
+	      },
 		});
     },
     formChange: function(e){

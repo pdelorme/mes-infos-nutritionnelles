@@ -449,7 +449,11 @@ module.exports = ControlView = Backbone.View.extend({
     	$.getJSON('invalidProducts', function(data) {
         	productBody.html("");
     		$.each(data, function(key, val) {
-    			productBody.append(productRowTemplate(val));
+    		    if(val.shop_label){
+    		      productBody.append(productRowTemplate(val));
+    		    } else {
+    		      console.log(val);
+    		    }
     		});
         	$("#loader").hide();
     	});
@@ -471,8 +475,11 @@ module.exports = ControlView = Backbone.View.extend({
           beforeSend: function(){$("#modal-overlay").show();},
           complete: function(){$("#modal-overlay").hide();},
 		  success: function(data) {
-	        	that.getData();
-	    	},
+	        // recharge la page.
+		    that.getData();
+		    // recalcule les stats
+	        $.get('buildAllStats');
+	      },
 		});
     },
     formChange: function(e){
@@ -522,7 +529,9 @@ module.exports = DataView = Backbone.View.extend({
     	$.getJSON('dayFacts?day='+this.day, function(data) {
         	productBody.html("");
     		$.each(data, function(key, val) {
+    		  if(val.shop_label){
     			productBody.append(productRowTemplate(val));
+    		  }
     		});
         	$("#loader").hide();
             $(document).scrollTo("#dataContainer",1000, {offset:-50});
@@ -543,8 +552,13 @@ module.exports = DataView = Backbone.View.extend({
           beforeSend: function(){$("#modal-overlay").show();},
           complete: function(){ $("#modal-overlay").hide();},
 		  success: function(data) {
+		      // recharge le tableau.
 			  that.getData();
-			  that.statsView.updateChart();
+			  // reconstruit les stats
+			  $.get('buildAllStats', function(){
+			    // rafraichi le diagrame.
+			    that.statsView.updateChart();
+			  });
 	    	},
 		});
     	
