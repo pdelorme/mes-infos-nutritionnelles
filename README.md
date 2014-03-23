@@ -1,6 +1,6 @@
 ## MES INFOS NUTRITIONNELLES
 
-Dans le cadre du concours « mes infos » organisé par la fing (http://mesinfos.fing.org/), l'application « mes infos nutritionnelles » se propose de croiser les tickets de caisse Intermarché des utilisateurs avec la base de données nutritionelles OpenFoodFacts afin de constituer un profil nutritionnel individualisé. Il permet de suivre l'évolution et la qualité de la nutrition de l'utilisateur au travers des informations nutritionnelles de ses achats. L'application « mes infos nutritionnelles » permet également d'allimenter la base OpenFoodFacts à partir du feedback nutritionnel des utilisateurs.
+Dans le cadre du concours « mes infos » organisé par la fing (http://mesinfos.fing.org/), l'application « mes infos nutritionnelles » se propose de croiser les tickets de caisse Intermarché des utilisateurs avec la base de données nutritionelles OpenFoodFacts afin de constituer un profil nutritionnel individualisé. Il permet de suivre l'évolution et la qualité de la nutrition de l'utilisateur au travers des informations nutritionnelles de ses achats. L'application « mes infos nutritionnelles » permet également d'alimenter la base OpenFoodFacts à partir du feedback nutritionnel des utilisateurs.
 
 ## About Cozy
 
